@@ -1,0 +1,93 @@
+﻿
+.btn-custom {
+	background-color: #7AB8B7;
+	color: white;
+	border: none;
+}
+
+	.btn-custom:hover {
+		background-color: #469796; /* Темнее основной цвет при наведении */
+		color: white; /* Сохраняем белый текст */
+	}
+
+/*.btn-custom:active {
+	background-color: #A78C7E;*/ /* Ещё темнее при нажатии */
+	/*color: white;*/ /* Сохраняем белый текст */
+/*}*/
+
+table {
+	width: 100%;
+	max-width: 70%; /* Устанавливаем максимальную ширину */
+	margin: 0 auto; /* Центрируем таблицу */
+	border-collapse: collapse; /* Убираем двойные линии между ячейками */
+	border: 1px solid #7AB8B7; /* Розовый контур для таблицы */
+}
+
+
+	table th, table td {
+		border: 1px solid #7AB8B7; /* Розовый контур для ячеек */
+		padding: 8px;
+		text-align: center;
+	}
+
+tr {
+	border-bottom: 1px solid #7AB8B7;
+}
+
+.search-container {
+	position: relative;
+	width: fit-content;
+	margin-bottom: 4px;
+}
+
+.search-container input {
+	width: 250px;
+	padding: 5px;
+	border-radius: 10px;
+	border: 1px solid black;
+	padding-right: 35px; /* Увеличиваем место для иконки справа */
+}
+
+.search-container input:focus {
+	box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.4);
+	border-color: black;
+	outline: none;
+}
+
+.search-container .search-icon {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	font-size: 18px; /* Размер иконки */
+	color: black;
+}
+
+.page-title {
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+
+
+.btn-add {
+	width: 150px;
+}
+
+.action-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	align-items: center;
+	width: 100%;
+	max-width: 70%;
+	margin: 0 auto;
+	margin-bottom: 15px;
+}
+
+.page-title {
+	width: 100%;
+	max-width: 70%;
+	margin: 0 auto;
+	text-align: left;
+	margin-bottom: 25px;
+}

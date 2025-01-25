@@ -1,0 +1,391 @@
+﻿body, html {
+	margin: 0; /* Убираем внешние отступы для обеспечения полного покрытия экрана. */
+	padding: 0; /* Убираем внутренние отступы*/
+	width: 100%; /* Задаем ширину на 100% от размера окна браузера. */
+	height: 100%; /* Задаем высоту на 100% от размера окна браузера. */
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	padding-top: 45px;
+}
+
+.container {
+	width: calc(100% - 40px); /* Общая ширина экрана минус 40px, чтобы создать отступы по бокам. */
+	margin: 0 auto; /* Центрируем контейнер по горизонтали. */
+	padding: 0; /* Убираем внутренние отступы. */
+	box-sizing: border-box; /* Учитываем padding и border в общей ширине и высоте элемента. */
+	max-width: 1700px; /* Ограничиваем ширину для больших экранов, чтобы не растягивать контент. */
+}
+
+.intro-container {
+	display: flex; /* Используем Flexbox для размещения содержимого. */
+	justify-content: center; /* Центрируем элементы по горизонтали. */
+	align-items: center; /* Центрируем элементы по вертикали. */
+	margin-bottom: 40px; /* Добавляем отступ снизу между этим и следующим блоками. */
+}
+
+.intro-block {
+	background-color: #FBF4CC; /* Задаем светло-желтый фон для визуального акцента. */
+	padding: 80px; /* Добавляем внутренние отступы для "воздуха" вокруг содержимого. */
+	border-radius: 30px; /* Скругляем углы для более мягкого дизайна. */
+	display: flex; /* Flexbox для выравнивания дочерних элементов. */
+	align-items: center; /* Выравниваем дочерние элементы по вертикали. */
+	width: 100%; /* Элемент занимает всю ширину родителя. */
+	min-height: 600px; /* Устанавливаем минимальную высоту, чтобы элемент оставался заметным. */
+}
+
+.intro-block h1 {
+	margin-top: 40px; /* Добавляем отступ сверху для визуального разделения. */
+	font-size: 40px; /* Размер текста для заголовка. */
+	font-weight: bold; /* Толстый шрифт для акцента. */
+	color: #000; /* Черный цвет текста. */
+}
+
+.btn-intro {
+	margin-top: 100px; /* Отступ сверху для отделения кнопки от текста. */
+	padding: 20px 30px; /* Внутренние отступы для увеличения кликабельной области кнопки. */
+	background-color: #1090F4; /* Синий цвет фона для кнопки. */
+	border: none; /* Убираем стандартную рамку кнопки. */
+	border-radius: 30px; /* Скругленные углы кнопки для эстетики. */
+	font-size: 25px; /* Размер текста кнопки. */
+	font-weight: bold; /* Толстый текст для акцента. */
+	cursor: pointer; /* Указываем, что элемент кликабельный. */
+	color: white; /* Белый цвет текста для контраста с фоном. */
+}
+
+	.btn-intro:hover {
+		color: white;
+		background-color: #007ACC;
+	}
+
+/* Адаптивность для планшетов */
+@@media (max-width: 1200px) {
+	.intro-block {
+		min-height: 250px; /* Уменьшаем минимальную высоту для компактного отображения. */
+	}
+
+	.intro-block {
+		width: 90%; /* Уменьшаем ширину, чтобы блок выглядел лучше на меньших экранах. */
+	}
+}
+
+/* Адаптивность для смартфонов */
+@@media (max-width: 768px) {
+	.intro-block {
+		min-height: 200px; /* Еще больше уменьшаем минимальную высоту для удобства. */
+	}
+
+	.intro-block {
+		flex-direction: column; /* Переключаемся на вертикальное расположение содержимого. */
+		text-align: center; /* Центрируем текст. */
+		padding: 15px; /* Уменьшаем внутренние отступы для компактности. */
+		width: 95%; /* Почти полностью занимаем ширину экрана. */
+	}
+
+	.intro-block img {
+		margin: 20px 0; /* Увеличиваем отступы сверху и снизу для равномерности. */
+		width: 120px; /* Уменьшаем размер изображения. */
+	}
+
+	.intro-block button {
+		font-size: 14px; /* Уменьшаем размер текста кнопки. */
+		padding: 8px 16px; /* Уменьшаем внутренние отступы кнопки. */
+	}
+
+	.intro-block h1 {
+		font-size: 20px; /* Уменьшаем размер заголовка для компактного отображения. */
+	}
+}
+
+/* Курсы */
+.courses {
+	padding: 20px; /* Внутренние отступы для общего "воздуха" вокруг содержимого. */
+	margin-bottom: 80px;
+}
+
+.courses h2 {
+	text-align: left; /* Выравниваем текст заголовка по левому краю. */
+	font-size: 30px; /* Размер текста заголовка. */
+	font-weight: bold; /* Толстый текст для акцента. */
+	margin-bottom: 20px; /* Отступ снизу для отделения от основного содержимого. */
+}
+
+.course-grid {
+	display: grid; /* Используем CSS Grid для упорядочивания карточек. */
+	grid-template-columns: repeat(2, 1fr); /* Две колонки одинаковой ширины. */
+	gap: 50px; /* Расстояние между карточками. */
+	font-size: 20px;
+}
+
+.course-card {
+	background-color: #fff; /* Белый фон для контраста с остальным дизайном. */
+	height: 350px;
+	border-radius: 20px; /* Скругляем углы карточки. */
+	padding: 20px; /* Внутренние отступы внутри карточки. */
+	display: flex; /* Flexbox для вертикального выравнивания содержимого. */
+	flex-direction: column; /* Элементы располагаются сверху вниз. */
+	justify-content: space-between; /* Равномерное распределение пространства внутри карточки. */
+}
+
+.course-card h3 {
+	font-size: 25px; /* Размер текста заголовка карточки. */
+	font-weight: bold; /* Толстый текст для акцента. */
+	margin-bottom: 10px; /* Отступ снизу для отделения от списка. */
+}
+
+.course-card ul {
+	list-style-type: disc; /* Стандартный маркер для списка. */
+	margin-left: 20px; /* Отступ слева для маркеров. */
+	margin-bottom: 20px; /* Отступ снизу для отделения от других элементов. */
+	color: #333; /* Темный цвет текста для читаемости. */
+}
+
+.course-card ul li {
+	margin-bottom: 10px; /* Отступ снизу между элементами списка. */
+}
+
+.course-details {
+	display: flex; /* Flexbox для горизонтального выравнивания. */
+	justify-content: center; /* Равное расстояние между элементами. */
+	gap: 30px;
+	font-size: 15px; /* Размер текста для компактного отображения. */
+	font-weight: bold; /* Толстый текст для акцента. */
+	color: #555; /* Более светлый оттенок черного для деталей. */
+}
+
+	.course-details span {
+		display: inline-block; /* Для управления размерами элементов. */
+		padding: 5px 10px; /* Внутренние отступы для кнопочного вида. */
+		background-color: rgba(255, 255, 255, 0.8);
+		border-radius: 20px; /* Скругление углов. */
+		font-weight: bold; /* Толстый текст для акцента. */
+		text-align: center; /* Центрируем текст внутри. */
+	}
+.yellow {
+	background-color: #FFF1AC;
+}
+
+.green {
+	background-color: #B0F5E7;
+}
+
+.pink {
+	background-color: #FFC2B4;
+}
+
+.purple {
+	background-color: #B8C8FF;
+}
+
+/*Запись*/
+.trial-container {
+	background-color: #0099FF; /* Голубой фон */
+	width: 100vw; /* Растягиваем блок на всю ширину экрана */
+	margin-left: calc(50% - 50vw);
+	min-height: 300px;
+	color: #fff;
+	padding: 40px 20px;
+	text-align: center;
+	position: relative;
+}
+
+.trial-class h2 {
+	font-size: 28px;
+	margin-bottom: 20px;
+	font-weight: bold;
+}
+
+.form {
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 20px;
+	max-width: 900px;
+	margin: 0 auto;
+	text-align: left;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	color: #000;
+	position: relative; /* Для наложения смайлика */
+	z-index: 2; /* Поверх смайлика */
+}
+
+.form-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+	.form-fields input {
+		flex: 1 1 calc(33.333% - 10px);
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		font-size: 14px;
+	}
+
+.form-checkbox {
+	font-size: 12px;
+	color: #333;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: flex-start;
+}
+
+	.form-checkbox input {
+		margin-right: 10px;
+	}
+
+	.form-checkbox a {
+		color: #0099FF;
+		text-decoration: underline;
+	}
+
+.form-button {
+	background-color: #0099FF;
+	color: #fff;
+	padding: 12px 20px;
+	font-size: 16px;
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	width: 100%;
+}
+
+	.form-button:hover {
+		background-color: #007ACC;
+	}
+
+/* Смайлик */
+.smiley {
+	position: absolute;
+	width: 550px; /* Увеличенный размер смайлика */
+	height: auto;
+	right: 20px; /* Отступ от правого края */
+	bottom: -30px; /* Под формой */
+	z-index: 1; /* Под формой */
+	z-index: 1; /* Под формой */
+}
+
+/*Цены*/
+.section-prices {
+	text-align: center;
+	padding: 50px 20px;
+}
+
+.section-prices h2 {
+	text-align: left;
+	font-size: 30px;
+	font-weight: bold; 
+	margin-bottom: 20px;
+}
+
+.cards-container {
+	display: flex;
+	justify-content: center;
+	gap: 90px;
+	flex-wrap: wrap;
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+	width: 400px;
+	padding: 20px;
+	text-align: left;
+	padding: 50px 50px 30px 50px;
+}
+
+.card h3 {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 30px;
+}
+
+.card p {
+	font-size: 18px;
+	margin: 10px 0;
+	line-height: 1.5;
+}
+
+.card .btn {
+	margin-top: auto;
+	display: block;
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	color: #fff;
+	background-color: #0099FF;
+	border: none;
+	border-radius: 30px;
+	text-decoration: none;
+}
+
+.card .btn:hover {
+	background-color: #007ACC;
+}
+
+/*футер*/
+.footer {
+	width: 100vw; /* Растягиваем блок на всю ширину экрана */
+	margin-left: calc(50% - 50vw);
+	background-color: #25262C; /* Темный фон */
+	color: #C0C0C0;
+	padding: 20px;
+	display: flex;
+	justify-content: center;
+}
+
+.footer-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	max-width: 1300px;
+	height: 220px;
+	width: 100%;
+	padding: 0 20px;
+}
+
+.footer-info p {
+	margin: 5px 0;
+	font-size: 17px;
+}
+
+.footer-content .btn {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #ffef94;
+	color: #000;
+	font-size: 16px;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 20px;
+}
+
+.footer-content .btn:hover {
+	background-color: #ffe45c;
+}
+
+@media (max-width: 768px) {
+	.footer-content {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.footer-button {
+		margin-top: 20px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.btn-trial {
+		width: 100%;
+		text-align: center;
+	}
+}
+

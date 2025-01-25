@@ -1,0 +1,95 @@
+/* Общие стили */
+html, body {
+    font-family: "Montserrat", serif;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 0; 
+}
+
+
+.custom-navbar {
+    background-color: white;
+    color: #000;
+    min-height: 80px;
+    position: relative;
+}
+
+.navbar-brand {
+    color: black !important;
+    margin-right: auto; /* Логотип слева */
+}
+
+.navbar-nav .nav-link {
+    color: black !important;
+    padding: 15px 10px;
+    font-size: 20px; 
+}
+
+.navbar-nav .nav-item:last-child {
+    margin-right: 0;
+}
+
+/* Центрирование меню */
+.center-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+}
+
+    .center-menu .nav-link {
+        font-size: 20px; 
+        font-weight: normal;
+        margin: 0 10px;
+    }
+
+/* Телефон и кнопка входа справа */
+.right-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Сдвигаем вправо */
+}
+
+.phone-number {
+    font-size: 18px;
+    color: black;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+    .phone-number i {
+        font-size: 18px;
+        margin-right: 5px;
+    }
+
+.btn-login {
+    color: black !important;
+    font-size: 18px;
+    padding: 5px 10px;
+    font-weight: normal;
+}
+
+
+.btn-login i {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+/*.sticky-navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;*/ /* Убедитесь, что меню занимает всю ширину окна */
+    /*z-index: 1000;
+    background-color: white;*/
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
+/*}*/
