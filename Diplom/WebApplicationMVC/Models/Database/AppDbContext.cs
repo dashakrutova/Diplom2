@@ -1,5 +1,4 @@
-﻿
-using Bogus;
+﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace WebApplicationMVC.Models.Database
 {
-	public class AppDbContext : DbContext
+    public class AppDbContext : DbContext
 	{
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 			//Database.EnsureDeleted();
-			Database.EnsureCreated();
+			//Database.EnsureCreated();
 		}
 
 		public DbSet<User> Users { get; set; }
@@ -111,21 +110,6 @@ namespace WebApplicationMVC.Models.Database
 			return builder;
 		}
 
-
-	}
-
-	public class User
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Login { get; set; }
-		public string Password { get; set; }
-		public string Number { get; set; }
-		public DateOnly DateOfBirth { get; set; }
-		public List<Course> Courses { get; set; }
-		public int RoleId { get; set; }
-		public Role Role { get; set; }
-		public List<Student> Student { get; set; }
 
 	}
 	public class Student

@@ -1,0 +1,24 @@
+﻿@model LoginFormModel
+
+<!DOCTYPE html> 
+<html>
+<body>
+    <form asp-action="Login" method="post">
+        <p>
+            <div>
+                <label asp-for="Login">Login</label>
+                <input asp-for="Login"/>
+            </div>
+        </p>
+
+        <p>
+            <div>
+                <label asp-for="Password">Password</label>
+                <input type="password" asp-for="Password" />
+            </div>
+        </p>
+        <button type="submit">Login</button>
+    </form>
+
+</body>
+</html> 

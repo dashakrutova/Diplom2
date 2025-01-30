@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApplicationMVC.Auth;
 using WebApplicationMVC.Models.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
 	options.UseSqlite("Data Source=app.db");
+});
+
+builder.Services.AddAuthentication()
+	.AddCookie(AuthSettings.AuthCookieName, options =>
+	{
+		options.LoginPath = "/auth";
+		options.AccessDeniedPath = "/auth/forbidden";
+		options.Cookie.Name = AuthSettings.AuthCookieName;
+ 	});
+
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy("admin", policy => policy.RequireClaim("admin", "true"));
 });
 
 var app = builder.Build();
@@ -25,7 +39,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
