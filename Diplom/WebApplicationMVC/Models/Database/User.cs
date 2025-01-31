@@ -16,10 +16,23 @@ namespace WebApplicationMVC.Models.Database
 		public Role Role { get; set; }
 		public List<Student> Student { get; set; }
 
+        public AppRole AppRole { get; set; }
 
 		[NotMapped]
-		public List<Claim> Claims { get; set; }
+        public List<Claim> Claims
+		{
+			get
+			{
+                var claims = new List<Claim>();
+				claims.Add(new Claim(ClaimTypes.Name, Name));
 
+				if (AppRole == AppRole.Admin)
+				{
+                    claims.Add(new Claim(AppRole.Admin.ToString(), "true"));
+                }
+
+				return claims;
+			}
+		}
 	}
-
 }

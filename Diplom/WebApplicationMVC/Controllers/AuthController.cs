@@ -10,18 +10,23 @@ namespace WebApplicationMVC.Controllers;
 
 public class AuthController : Controller
 {
+    private readonly UserManager _userManager;
+
+    public AuthController(UserManager userManager)
+    {
+        _userManager = userManager;
+    }
+
     [HttpGet]
-    [Route("login")]
     public IActionResult Login()
     {
         return View();
     }
 
     [HttpPost]
-    [Route("login")]
     public async Task<IActionResult> Login(LoginFormModel model)
     {
-        User? user = UserManager.Login(model.Login, model.Password);
+        User? user = await _userManager.LoginAsync(model.Login, model.Password);
         if (user != null)
         {
             var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
@@ -37,28 +42,25 @@ public class AuthController : Controller
             //HttpContext.Response.Cookies.Append("Abrakadabra", user.Login);
         }
 
-        return RedirectToAction("Login", "Auth");
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
-    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(AuthSettings.AuthCookieName);
-        return RedirectToAction("Login", "Auth");
+        return RedirectToAction("Index", "Home");
     }
 
     [Authorize]
     [HttpGet]
-    [Route("onlyusers")]
     public IActionResult Onlyusers()
     {
         return View();
     }
 
-    [Authorize("admin123")]
+    [Authorize("admin")]
     [HttpGet]
-    [Route("onlyadmins")]
     public IActionResult Onlyadmins()
     {
         return View();

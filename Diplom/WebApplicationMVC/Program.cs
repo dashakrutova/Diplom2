@@ -11,17 +11,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlite("Data Source=app.db");
 });
 
+builder.Services.AddScoped<UserManager>();
+
 builder.Services.AddAuthentication()
 	.AddCookie(AuthSettings.AuthCookieName, options =>
 	{
-		options.LoginPath = "/login";
+		options.LoginPath = "/auth/login";
 		options.AccessDeniedPath = "/auth/forbidden";
 		options.Cookie.Name = AuthSettings.AuthCookieName;
  	});
 
 builder.Services.AddAuthorization(options =>
 {
-	options.AddPolicy("admin123", policy => policy.RequireClaim("admin", "true"));
+	options.AddPolicy("admin", 
+		policy => policy.RequireClaim(AppRole.Admin.ToString(), "true"));
 });
 
 var app = builder.Build();
