@@ -14,14 +14,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAuthentication()
 	.AddCookie(AuthSettings.AuthCookieName, options =>
 	{
-		options.LoginPath = "/auth";
+		options.LoginPath = "/login";
 		options.AccessDeniedPath = "/auth/forbidden";
 		options.Cookie.Name = AuthSettings.AuthCookieName;
  	});
 
 builder.Services.AddAuthorization(options =>
 {
-	options.AddPolicy("admin", policy => policy.RequireClaim("admin", "true"));
+	options.AddPolicy("admin123", policy => policy.RequireClaim("admin", "true"));
 });
 
 var app = builder.Build();
@@ -40,7 +40,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 //app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",

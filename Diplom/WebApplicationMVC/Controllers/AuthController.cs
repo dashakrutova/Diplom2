@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebApplicationMVC.Auth;
@@ -37,5 +38,34 @@ public class AuthController : Controller
         }
 
         return RedirectToAction("Login", "Auth");
+    }
+
+    [HttpPost]
+    [Route("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(AuthSettings.AuthCookieName);
+        return RedirectToAction("Login", "Auth");
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("onlyusers")]
+    public IActionResult Onlyusers()
+    {
+        return View();
+    }
+
+    [Authorize("admin123")]
+    [HttpGet]
+    [Route("onlyadmins")]
+    public IActionResult Onlyadmins()
+    {
+        return View();
+    }
+
+    public IActionResult Forbidden()
+    {
+        return View();
     }
 }
