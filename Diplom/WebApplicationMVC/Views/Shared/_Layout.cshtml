@@ -57,6 +57,11 @@
                         </ul>
                     }
 
+                    @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
+                    {
+                        <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">ЛК Админ</a>
+                    }
+
                 </div>
 
                 <!-- Телефон и Вход справа -->
@@ -64,7 +69,6 @@
                     <a class="nav-link text-dark phone-number" href="tel:+71234567890">
                         <i class="bi bi-telephone me-2"></i>+7 (123) 456-78-90
                     </a>
-
                         @if(User.Identity?.IsAuthenticated ?? false)
                         {
                             <p>@(User.Identity?.Name)</p>

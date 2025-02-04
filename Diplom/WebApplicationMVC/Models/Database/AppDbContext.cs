@@ -8,8 +8,8 @@ namespace WebApplicationMVC.Models.Database
 	{
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
-			Database.EnsureDeleted();
-			Database.EnsureCreated();
+			// Database.EnsureDeleted();
+			// Database.EnsureCreated();
 		}
 
 		public DbSet<User> Users { get; set; }
@@ -102,8 +102,7 @@ namespace WebApplicationMVC.Models.Database
 			var coursesFaker = new Faker<Course>()
 							.RuleFor(u => u.Name, (f, u) => u.Name = f.Lorem.Word())
 							.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)
-							.RuleFor(u => u.Description, (f, u) => u.Description = f.Lorem.Paragraph())
-							.RuleFor(u => u.TeacherId, (f, u) => u.TeacherId = f.PickRandom(users.Where(u => u.RoleId == 2)).Id);
+							.RuleFor(u => u.Description, (f, u) => u.Description = f.Lorem.Paragraph());
 			var courses = coursesFaker.Generate(5);
 			builder.Entity<Course>().HasData(courses);
 
@@ -129,70 +128,5 @@ namespace WebApplicationMVC.Models.Database
 
 			return builder;
 		}
-
-
 	}
-	public class Student
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public DateOnly DateOfBirth { get; set; }
-		public int CourseId { get; set; }
-		public Course Course { get; set; }
-		public int GroupId { get; set; }
-		public Group Group { get; set; }
-		public int ParentId { get; set; }
-		public User Parent { get; set; }
-		public int RoleId { get; set; }
-		public Role Role { get; set; }
-
-	}
-
-	public class Role
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-	}
-
-
-	public class Course
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Description { get; set; }
-
-		public int TeacherId { get; set; }
-		public User Teacher { get; set; }
-		public List<Group> Groups { get; set; }
-	}
-	public class Group
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public int CourseId { get; set; }
-		public Course Course { get; set; }
-		public List<Student> Students { get; set; }
-	}
-	public class ScheduleEntry
-	{
-		public int Id { get; set; }
-		public int GroupId { get; set; }
-		public Group Group { get; set; }
-		public DateTimeOffset Start { get; set; }
-		public DateTimeOffset End { get; set; }
-	}
-	public class Status
-	{
-		public int Id { get; set; }
-		public bool Value { get; set; }
-	}
-	public class Visiting
-	{
-		public int Id { get; set; }
-		public int StatusId { get; set; }
-		public Status Status { get; set; }
-		public int ScheduleEntryId { get; set; }
-		public ScheduleEntry ScheduleEntry { get; set; }
-	}
-
 }

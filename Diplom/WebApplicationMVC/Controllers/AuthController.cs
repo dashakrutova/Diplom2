@@ -39,10 +39,14 @@ public class AuthController : Controller
                 {
                     IsPersistent = false,
                 });
-            //HttpContext.Response.Cookies.Append("Abrakadabra", user.Login);
+
+            if (user.AppRole == AppRole.Admin)
+                return RedirectToAction("Index", "Admin");
+
+            return RedirectToAction("Index", "Home");
         }
 
-        return RedirectToAction("Index", "Home");
+        return View(model);
     }
 
     [HttpPost]

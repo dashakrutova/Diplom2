@@ -1,4 +1,4 @@
-﻿@model WebApplicationMVC.Models.Database.Course
+﻿@model WebApplicationMVC.ViewModels.EditCourseFormModel
 
 @{
     // Layout = null;
@@ -31,11 +31,6 @@
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TeacherId" class="control-label"></label>
-                <select asp-for="TeacherId" class="form-control" asp-items="ViewBag.TeacherId"></select>
-                <span asp-validation-for="TeacherId" class="text-danger"></span>
             </div>
             <div class="form-group">
                     <input type="submit" value="Сохранить" class="btn btn-save" />
