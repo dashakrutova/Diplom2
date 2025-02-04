@@ -1,21 +1,14 @@
-﻿
-using Bogus;
+﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebApplicationMVC.Models.Database
 {
-	public class AppDbContext : DbContext
+    public class AppDbContext : DbContext
 	{
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
-			//Database.EnsureDeleted();
+			Database.EnsureDeleted();
 			Database.EnsureCreated();
 		}
 
@@ -37,8 +30,11 @@ namespace WebApplicationMVC.Models.Database
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<User>()
+				.Property(o => o.AppRole)
+				.HasConversion<int>();
 
-			modelBuilder
+            modelBuilder
 				.AddFakeData();
 		}
 	}
@@ -78,7 +74,30 @@ namespace WebApplicationMVC.Models.Database
 				.RuleFor(s => s.RoleId, (f, s) => s.RoleId = f.PickRandom(roles).Id);
 			_ = usersFaker.Generate(1);
 			var users = usersFaker.Generate(5);
-			builder.Entity<User>().HasData(users);
+
+            users.Add(new User()
+            {
+				Id = users.Max(x => x.Id) + 1,
+				Name = "Admin",
+				Number = "123",
+				RoleId = roles.First().Id,
+                Login = "admin@mail.ru",
+                Password = "admin",
+				AppRole = AppRole.Admin,
+            });
+
+            users.Add(new User()
+            {
+                Id = users.Max(x => x.Id) + 1,
+                Name = "Teacher",
+                Number = "456",
+                RoleId = roles.First().Id,
+                Login = "teacher@mail.ru",
+                Password = "teacher",
+				AppRole = AppRole.Teacher
+            });
+
+            builder.Entity<User>().HasData(users);
 
 			var coursesFaker = new Faker<Course>()
 							.RuleFor(u => u.Name, (f, u) => u.Name = f.Lorem.Word())
@@ -111,21 +130,6 @@ namespace WebApplicationMVC.Models.Database
 			return builder;
 		}
 
-
-	}
-
-	public class User
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Login { get; set; }
-		public string Password { get; set; }
-		public string Number { get; set; }
-		public DateOnly DateOfBirth { get; set; }
-		public List<Course> Courses { get; set; }
-		public int RoleId { get; set; }
-		public Role Role { get; set; }
-		public List<Student> Student { get; set; }
 
 	}
 	public class Student

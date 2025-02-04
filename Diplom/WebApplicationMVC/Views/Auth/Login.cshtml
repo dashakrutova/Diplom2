@@ -1,0 +1,55 @@
+﻿@model LoginFormModel
+
+<!DOCTYPE html> 
+<html>
+<body>
+    <form asp-action="Login" method="post">
+        <p>
+            <div>
+                <label asp-for="Login">Login</label>
+                <input asp-for="Login"/>
+            </div>
+        </p>
+
+        <p>
+            <div>
+                <label asp-for="Password">Password</label>
+                <input type="password" asp-for="Password" />
+            </div>
+        </p>
+        <button type="submit">Login</button>
+    </form>
+
+</body>
+</html> 
+
+@if(User.Identity?.IsAuthenticated ?? false)
+{
+    <p>Пользователь авторизован</p>
+    <form asp-controller="Auth" asp-action="Logout" method="post"> 
+        <button type="submit">Logout</button>
+    </form>
+}
+else
+{
+    <p>Пользователь НЕ авторизован</p>
+}
+
+<p>
+    Текущий пользователь = @(User.Identity?.Name ?? "Anonim")
+</p>
+
+<h2>Claims</h2>
+@if(User.Claims.Any())
+{
+    <ul>
+        @foreach(var claim in User.Claims)
+        {
+            <li>@claim.ToString()</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No claims</p>
+}
