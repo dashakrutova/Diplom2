@@ -1,8 +1,11 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <style>
         .nav{
+            color: black !important;
+            font-size: 20px;
         }
 </style>
 </head>
@@ -21,6 +24,12 @@
     <ul class="navbar-nav mx-auto">
         <li class="nav-item">
             <a class="nav" asp-controller="Courses" asp-action="Index">Курсы</a>
+        </li>
+    </ul>
+
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+            <a class="nav" asp-controller="Groups" asp-action="Index">Группы</a>
         </li>
     </ul>
 </body>

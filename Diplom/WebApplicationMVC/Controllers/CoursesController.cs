@@ -136,7 +136,6 @@ public class CoursesController : Controller
                 course.Name = model.Name;
                 course.Description = model.Description;
 
-                _context.Update(course);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -161,6 +160,7 @@ public class CoursesController : Controller
 
         var course = await _context.Courses
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (course == null)
         {
             return NotFound();
@@ -182,8 +182,10 @@ public class CoursesController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id, DeleteCourseFormModel model)
     {
         var course = await _context.Courses.FindAsync(id);
+
         if (course != null)
         {
+            // Todo: необходимо проверять есть ли у кура группы. Если есть, то запретить удаление
             _context.Courses.Remove(course);
         }
 

@@ -1,163 +1,230 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationMVC.Models.Database;
+using WebApplicationMVC.ViewModels.Groups;
 
-namespace WebApplicationMVC.Controllers
+namespace WebApplicationMVC.Controllers;
+
+[Authorize("admin")]
+public class GroupsController : Controller
 {
-    public class GroupsController : Controller
+    private readonly AppDbContext _context;
+
+    public GroupsController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public GroupsController(AppDbContext context)
+    // GET: Groups
+    public async Task<IActionResult> Index()
+    {
+        var groups = await _context.Groups.Include(g => g.Course).ToListAsync();
+
+        var groupsViewModels = groups.Select(g => new GroupViewModel()
         {
-            _context = context;
+            Id = g.Id,
+            Name = g.Name,
+            CourseName = g.Course.Name,
+        });
+
+        return View(groupsViewModels);
+    }
+
+    // GET: Groups/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
         }
 
-        // GET: Groups
-        public async Task<IActionResult> Index()
+        var group = await _context
+            .Groups
+            .Include(g => g.Course)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group == null)
         {
-            var appDbContext = _context.Groups.Include(c => c.Course);
-            return View(await appDbContext.ToListAsync());
+            return NotFound();
         }
 
-        // GET: Groups/Details/5
-        public async Task<IActionResult> Details(int? id)
+        var gropViewModel = new GroupViewModel()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            Id = group.Id,
+            Name = group.Name,
+            CourseName = group.Course.Name,
+        };
 
-            var @group = await _context.Groups
-                .Include(c => c.Course)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
-            {
-                return NotFound();
-            }
+        return View(gropViewModel);
+    }
 
-            return View(@group);
-        }
+    // GET: Groups/Create
+    public async Task<IActionResult> Create()
+    {
+        var coursesItemList = await _context
+            .Courses
+            .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
+            .ToListAsync();
 
-        // GET: Groups/Create
-        public IActionResult Create()
+        ViewData["Courses"] = coursesItemList;
+
+        return View();
+    }
+
+    // POST: Groups/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(
+        [Bind("Name,CourseId")] CreateGroupFormModel model)
+    {
+        if (ModelState.IsValid)
         {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
-            return View();
-        }
-
-        // POST: Groups/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CourseId")] Group @group)
-        {
-            if (ModelState.IsValid)
+            // Todo: нужно проверить, что такое CourseId
+            var group = new Group()
             {
-                _context.Add(@group);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            return View(@group);
-        }
+                Name = model.Name,
+                CourseId = model.CourseId,
+            };
 
-        // GET: Groups/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
-            {
-                return NotFound();
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            return View(@group);
-        }
-
-        // POST: Groups/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CourseId")] Group @group)
-        {
-            if (id != @group.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(@group);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GroupExists(@group.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            return View(@group);
-        }
-
-        // GET: Groups/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @group = await _context.Groups
-                .Include(c => c.Course)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
-            {
-                return NotFound();
-            }
-
-            return View(@group);
-        }
-
-        // POST: Groups/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group != null)
-            {
-                _context.Groups.Remove(@group);
-            }
-
+            _context.Add(group);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GroupExists(int id)
+        return RedirectToAction(nameof(Create));
+    }
+
+    // GET: Groups/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
         {
-            return _context.Groups.Any(e => e.Id == id);
+            return NotFound();
         }
+
+        var group = await _context.Groups.FindAsync(id);
+        if (group == null)
+        {
+            return NotFound();
+        }
+
+        var groupEditModel = new EditGroupFormModel()
+        {
+            Id = group.Id,
+            Name = group.Name,
+            CourseId = group.CourseId
+        };
+
+        var courses = await _context
+            .Courses
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
+
+        var coursesItemList = new SelectList(courses, "Id", "Name", group.CourseId);
+
+        ViewBag.Courses = coursesItemList;
+
+        return View(groupEditModel);
+    }
+
+    // POST: Groups/Edit/5
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        int id, [Bind("Id,Name,CourseId")] EditGroupFormModel model)
+    {
+        if (id != model.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var group = await _context.Groups.FirstOrDefaultAsync(x => x.Id == model.Id);
+                if (group == null)
+                    return NotFound();
+
+                group.Name = model.Name;
+                group.CourseId = model.CourseId;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GroupExists(model.Id))
+                {
+                    return NotFound();
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        var courses = await _context
+            .Courses
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
+
+        var coursesItemList = new SelectList(courses, "Id", "Name", model.CourseId);
+
+        ViewBag.Courses = coursesItemList;
+
+        return View(model);
+    }
+
+    // GET: Groups/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var group = await _context
+            .Groups
+            .Include(g => g.Course)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group == null)
+            return NotFound();
+
+        var deleteGroupModel = new DeleteGroupFormModel()
+        {
+            Id = group.Id,
+            Name = group.Name,
+            CourseName = group.Course.Name
+        };
+
+        return View(deleteGroupModel);
+    }
+
+    // POST: Groups/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var group = await _context.Groups.FindAsync(id);
+
+        // Todo: нужна проверка, что у группы нет студентов.
+        // Иначе нельзя удалить
+        if (group != null)
+        {
+            _context.Groups.Remove(@group);
+        }
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    private bool GroupExists(int id)
+    {
+        return _context.Groups.Any(e => e.Id == id);
     }
 }
