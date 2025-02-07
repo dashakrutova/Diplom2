@@ -1,15 +1,27 @@
-﻿<p>
-    ЛК администратора
-</p>
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style>
+        .nav{
+        }
+</style>
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <p>@(User.Identity?.Name)</p>
+    }
+    else
+    {
+        <a class="btn btn-login" asp-controller="Auth" asp-action="Login">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Вход
+        </a>
+    }
 
-<ul class="navbar-nav mx-auto">
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Курсы</a>
-    </li>
-@*     <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Цены</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Контакты</a>
-    </li> *@
-</ul>
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+            <a class="nav" asp-controller="Courses" asp-action="Index">Курсы</a>
+        </li>
+    </ul>
+</body>
+</html>
