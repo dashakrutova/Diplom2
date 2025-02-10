@@ -3,34 +3,87 @@
 <head>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <style>
-        .nav{
-            color: black !important;
-            font-size: 20px;
+    body{
+            padding-top: 100px;
+    }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .nav{
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            text-decoration: none; 
+            color: black; 
+    }
+
+        .nav:hover {
+            color: black;
+            background-color: #f0f0f0;
         }
+
+
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid black;
+    }
+
+    .name {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .exit-button {
+        background-color: #00aaff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .exit-button:hover {
+        background-color: #0088cc;
+    }
 </style>
 </head>
 <body>
-    @if (User.Identity?.IsAuthenticated ?? false)
-    {
-        <p>@(User.Identity?.Name)</p>
-    }
-    else
-    {
-        <a class="btn btn-login" asp-controller="Auth" asp-action="Login">
-            <i class="bi bi-box-arrow-in-right me-1"></i>Вход
-        </a>
-    }
+    <div class="wrapper">
+        <img src="~/images/icon.png" alt="Аватар" class="avatar">
+    
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <div class="name">
+                <p>@(User.Identity?.Name)</p>
+            </div>
 
-    <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-            <a class="nav" asp-controller="Courses" asp-action="Index">Курсы</a>
-        </li>
-    </ul>
+        <a asp-controller="Courses" asp-action="Index" class="nav">Курсы</a>
+        <a asp-controller="Groups" asp-action="Index" class="nav">Группы</a>
 
-    <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-            <a class="nav" asp-controller="Groups" asp-action="Index">Группы</a>
-        </li>
-    </ul>
+        <form asp-controller="Auth" asp-action="Logout" method="post">
+            <button type="submit" class="exit-button">Выйти</button>
+        </form>
+        @* <a class="btn btn-logout" asp-controller="Auth" asp-action="Logout" method="post">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Выйти
+                            </a> *@
+        }
+    </div>
+
 </body>
 </html>

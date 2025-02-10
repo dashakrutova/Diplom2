@@ -1,4 +1,6 @@
-﻿
+﻿body {
+	padding-top: 100px;
+}
 
 	.btn-custom:hover {
 		background-color: #469796; /* Темнее основной цвет при наведении */

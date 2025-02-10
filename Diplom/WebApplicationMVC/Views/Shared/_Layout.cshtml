@@ -22,73 +22,55 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Меню в центре -->
-                <div class="center-menu">
-                    @if (ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home")
-                    {
-                        <ul class="navbar-nav mx-auto">
-                            @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Курсы</a>
-                        </li> *@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="#courses">Курсы</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="#prices">Цены</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="#contacts">Контакты</a>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav mx-auto">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Курсы</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Цены</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Контакты</a>
-                            </li>
-                        </ul>
-                    }
+                @if (ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home")
+                {
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <div class="center-menu">
+                            <ul class="navbar-nav mx-auto">
+                                @* <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Курсы</a>
+                                    </li> *@
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="#courses">Курсы</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="#prices">Цены</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="#contacts">Контакты</a>
+                                </li>
+                                @* @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">ЛК админ</a>
+                                    </li>
+                                }   *@ 
+                            </ul>
+                        </div>
 
-                    @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
-                    {
-                        <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">ЛК Админ</a>
-                    }
-
-                </div>
-
-                <!-- Телефон и Вход справа -->
-                <div class="right-actions d-flex align-items-center">
-                    <a class="nav-link text-dark phone-number" href="tel:+71234567890">
-                        <i class="bi bi-telephone me-2"></i>+7 (123) 456-78-90
-                    </a>
-                        @if(User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <p>@(User.Identity?.Name)</p>
-
-                            <form asp-controller="Auth" asp-action="Logout" method="post">
-                                <button type="submit">Выйти</button>
-                            </form>
-                            @* <a class="btn btn-logout" asp-controller="Auth" asp-action="Logout" method="post">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Выйти
-                            </a> *@
-                        }
-                        else
-                        {
-                            <a class="btn btn-login" asp-controller="Auth" asp-action="Login">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Вход
+                        <!-- Телефон и Вход справа -->
+                        <div class="right-actions d-flex align-items-center">
+                            <a class="nav-link text-dark phone-number" href="tel:+71234567890">
+                                <i class="bi bi-telephone me-2"></i>+7 (123) 456-78-90
                             </a>
-                        }
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">@(User.Identity?.Name)</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-login" asp-controller="Auth" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Вход
+                                </a>
+                            }
 
-                </div>
-                </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+
+                }
             </div>
         </nav>
     </header>
