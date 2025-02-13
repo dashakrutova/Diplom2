@@ -20,13 +20,18 @@ public class GroupsController : Controller
     // GET: Groups
     public async Task<IActionResult> Index()
     {
-        var groups = await _context.Groups.Include(g => g.Course).ToListAsync();
+        var groups = await _context
+            .Groups
+            .Include(g => g.Course)
+            .Include(g => g.Teacher)
+            .ToListAsync();
 
         var groupsViewModels = groups.Select(g => new GroupViewModel()
         {
             Id = g.Id,
             Name = g.Name,
             CourseName = g.Course.Name,
+            TeacherName = g.Teacher.Name,
         });
 
         return View(groupsViewModels);
@@ -43,6 +48,7 @@ public class GroupsController : Controller
         var group = await _context
             .Groups
             .Include(g => g.Course)
+            .Include(g => g.Teacher)
             .FirstOrDefaultAsync(g => g.Id == id);
 
         if (group == null)
@@ -55,6 +61,7 @@ public class GroupsController : Controller
             Id = group.Id,
             Name = group.Name,
             CourseName = group.Course.Name,
+            TeacherName = group.Teacher.Name,
         };
 
         return View(gropViewModel);
@@ -63,12 +70,16 @@ public class GroupsController : Controller
     // GET: Groups/Create
     public async Task<IActionResult> Create()
     {
-        var coursesItemList = await _context
+        ViewData["Courses"] = await _context
             .Courses
             .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
             .ToListAsync();
 
-        ViewData["Courses"] = coursesItemList;
+        ViewData["Teachers"] = await _context
+            .Users
+            .Where(x => x.AppRole == AppRole.Teacher)
+            .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
+            .ToListAsync();
 
         return View();
     }
@@ -79,15 +90,48 @@ public class GroupsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Name,CourseId")] CreateGroupFormModel model)
+        [Bind("Name,CourseId,TeacherId")] CreateGroupFormModel model)
     {
         if (ModelState.IsValid)
         {
+            var teacher = await _context
+                .Users
+                .FirstOrDefaultAsync(x => x.Id == model.TeacherId && x.AppRole == AppRole.Teacher);
+
+            if (teacher == null || teacher.Name == "Мария Teacher" || teacher.AppRole != AppRole.Teacher)
+            {
+                ModelState.AddModelError("TeacherId", "Ошибка при выборе преподователя");
+                // Todo: по хорошему нужно дать нормально понять пользователю, что указанный user не может быть учителем
+                ViewData["Courses"] = await _context
+                    .Courses
+                    .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
+                    .ToListAsync();
+
+                ViewData["Teachers"] = await _context
+                    .Users
+                    .Where(x => x.AppRole == AppRole.Teacher)
+                    .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
+                    .ToListAsync();
+                return View(model);
+            }
+
+
+            var course = await _context
+                .Courses
+                .FirstOrDefaultAsync(x => x.Id == model.CourseId);
+
+            if (course == null)
+                // Todo: по хорошему нужно дать нормально понять пользователю
+                return RedirectToAction(nameof(Create));
+
             // Todo: нужно проверить, что такое CourseId
             var group = new Group()
             {
                 Name = model.Name,
-                CourseId = model.CourseId,
+                //CourseId = model.CourseId,
+                Course = course,
+                Teacher = teacher,
+                //TeacherId = model.TeacherId,
             };
 
             _context.Add(group);
@@ -116,7 +160,8 @@ public class GroupsController : Controller
         {
             Id = group.Id,
             Name = group.Name,
-            CourseId = group.CourseId
+            CourseId = group.CourseId,
+            TeacherId = group.TeacherId,
         };
 
         var courses = await _context
@@ -124,9 +169,17 @@ public class GroupsController : Controller
             .Select(x => new { Id = x.Id, Name = x.Name })
             .ToListAsync();
 
-        var coursesItemList = new SelectList(courses, "Id", "Name", group.CourseId);
+        ViewBag.Courses = new SelectList(courses, "Id", "Name", group.CourseId);
 
-        ViewBag.Courses = coursesItemList;
+        //ViewBag.Courses = coursesItemList;
+
+        var teachers = await _context
+            .Users
+            .Where(x => x.AppRole == AppRole.Teacher)
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
+
+        ViewBag.Teachers = new SelectList(teachers, "Id", "Name", group.TeacherId);
 
         return View(groupEditModel);
     }
@@ -137,7 +190,7 @@ public class GroupsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
-        int id, [Bind("Id,Name,CourseId")] EditGroupFormModel model)
+        int id, [Bind("Id,Name,CourseId,TeacherId")] EditGroupFormModel model)
     {
         if (id != model.Id)
         {
@@ -152,8 +205,25 @@ public class GroupsController : Controller
                 if (group == null)
                     return NotFound();
 
+                var course = await _context
+                   .Courses
+                   .FirstOrDefaultAsync(x => x.Id == model.CourseId);
+
+                if (course == null)
+                    // Todo: по хорошему нужно дать нормально понять пользователю, что указанный user не может быть учителем
+                    return NotFound();
+
+                var teacher = await _context
+                    .Users
+                    .FirstOrDefaultAsync(x => x.Id == model.TeacherId && x.AppRole == AppRole.Teacher);
+
+                if (teacher == null || teacher.AppRole != AppRole.Teacher)
+                    // Todo: по хорошему нужно дать нормально понять пользователю, что указанный user не может быть учителем
+                    return NotFound();
+
                 group.Name = model.Name;
                 group.CourseId = model.CourseId;
+                group.TeacherId = model.TeacherId;
 
                 await _context.SaveChangesAsync();
             }
@@ -227,4 +297,9 @@ public class GroupsController : Controller
     {
         return _context.Groups.Any(e => e.Id == id);
     }
+
+    private SelectList GetCoursesForBag()
+    {
+
+    } 
 }

@@ -8,8 +8,8 @@ namespace WebApplicationMVC.Models.Database
 	{
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
-			// Database.EnsureDeleted();
-			// Database.EnsureCreated();
+			//Database.EnsureDeleted();
+			//Database.EnsureCreated();
 		}
 
 		public DbSet<User> Users { get; set; }
@@ -89,12 +89,23 @@ namespace WebApplicationMVC.Models.Database
             users.Add(new User()
             {
                 Id = users.Max(x => x.Id) + 1,
-                Name = "Teacher",
+                Name = "Мария Teacher",
                 Number = "456",
                 RoleId = roles.First().Id,
                 Login = "teacher@mail.ru",
                 Password = "teacher",
 				AppRole = AppRole.Teacher
+            });
+
+            users.Add(new User()
+            {
+                Id = users.Max(x => x.Id) + 1,
+                Name = "Виталик Teacher",
+                Number = "789",
+                RoleId = roles.First().Id,
+                Login = "vitalik_teacher@mail.ru",
+                Password = "teacher",
+                AppRole = AppRole.Teacher
             });
 
             builder.Entity<User>().HasData(users);
@@ -109,8 +120,9 @@ namespace WebApplicationMVC.Models.Database
 			var groupsFaker = new Faker<Group>()
 				.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)
 				.RuleFor(u => u.Name, (f, u) => u.Name = f.Lorem.Word())
-				.RuleFor(u => u.CourseId, (f, u) => u.CourseId = f.PickRandom(courses).Id);
-			var groups = groupsFaker.Generate();
+				.RuleFor(u => u.CourseId, (f, u) => u.CourseId = f.PickRandom(courses).Id)
+				.RuleFor(u => u.TeacherId, (f, u) => u.TeacherId = f.PickRandom(users.Where(x => x.AppRole == AppRole.Teacher)).Id);
+			var groups = groupsFaker.Generate(3);
 			builder.Entity<Group>().HasData(groups);
 
 
