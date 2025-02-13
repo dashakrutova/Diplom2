@@ -70,16 +70,9 @@ public class GroupsController : Controller
     // GET: Groups/Create
     public async Task<IActionResult> Create()
     {
-        ViewData["Courses"] = await _context
-            .Courses
-            .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
-            .ToListAsync();
+        await SetCoursesForViewBagAsync();
 
-        ViewData["Teachers"] = await _context
-            .Users
-            .Where(x => x.AppRole == AppRole.Teacher)
-            .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
-            .ToListAsync();
+        await SetTeachersForViewBagAsync();
 
         return View();
     }
@@ -98,40 +91,31 @@ public class GroupsController : Controller
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == model.TeacherId && x.AppRole == AppRole.Teacher);
 
-            if (teacher == null || teacher.Name == "Мария Teacher" || teacher.AppRole != AppRole.Teacher)
+            if (teacher == null || teacher.AppRole != AppRole.Teacher)
             {
                 ModelState.AddModelError("TeacherId", "Ошибка при выборе преподователя");
-                // Todo: по хорошему нужно дать нормально понять пользователю, что указанный user не может быть учителем
-                ViewData["Courses"] = await _context
-                    .Courses
-                    .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
-                    .ToListAsync();
-
-                ViewData["Teachers"] = await _context
-                    .Users
-                    .Where(x => x.AppRole == AppRole.Teacher)
-                    .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
-                    .ToListAsync();
+                await SetTeachersForViewBagAsync(model.TeacherId);
+                await SetCoursesForViewBagAsync(model.CourseId);
                 return View(model);
             }
-
 
             var course = await _context
                 .Courses
                 .FirstOrDefaultAsync(x => x.Id == model.CourseId);
 
             if (course == null)
-                // Todo: по хорошему нужно дать нормально понять пользователю
-                return RedirectToAction(nameof(Create));
-
-            // Todo: нужно проверить, что такое CourseId
+            {
+                ModelState.AddModelError("CourseId", "Ошибка при выборе курса");
+                await SetTeachersForViewBagAsync(model.TeacherId);
+                await SetCoursesForViewBagAsync(model.CourseId);
+                return View(model);
+            }
+                
             var group = new Group()
             {
                 Name = model.Name,
-                //CourseId = model.CourseId,
                 Course = course,
                 Teacher = teacher,
-                //TeacherId = model.TeacherId,
             };
 
             _context.Add(group);
@@ -164,22 +148,9 @@ public class GroupsController : Controller
             TeacherId = group.TeacherId,
         };
 
-        var courses = await _context
-            .Courses
-            .Select(x => new { Id = x.Id, Name = x.Name })
-            .ToListAsync();
+        await SetCoursesForViewBagAsync(group.CourseId);
 
-        ViewBag.Courses = new SelectList(courses, "Id", "Name", group.CourseId);
-
-        //ViewBag.Courses = coursesItemList;
-
-        var teachers = await _context
-            .Users
-            .Where(x => x.AppRole == AppRole.Teacher)
-            .Select(x => new { Id = x.Id, Name = x.Name })
-            .ToListAsync();
-
-        ViewBag.Teachers = new SelectList(teachers, "Id", "Name", group.TeacherId);
+        await SetTeachersForViewBagAsync(group.TeacherId);
 
         return View(groupEditModel);
     }
@@ -237,14 +208,8 @@ public class GroupsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var courses = await _context
-            .Courses
-            .Select(x => new { Id = x.Id, Name = x.Name })
-            .ToListAsync();
-
-        var coursesItemList = new SelectList(courses, "Id", "Name", model.CourseId);
-
-        ViewBag.Courses = coursesItemList;
+        await SetCoursesForViewBagAsync(model.CourseId);
+        await SetTeachersForViewBagAsync(model.TeacherId);
 
         return View(model);
     }
@@ -298,8 +263,28 @@ public class GroupsController : Controller
         return _context.Groups.Any(e => e.Id == id);
     }
 
-    private SelectList GetCoursesForBag()
+    private async Task SetCoursesForViewBagAsync(int? id = null)
     {
+        var courses = await _context
+            .Courses
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
 
-    } 
+        ViewBag.Courses = id == null 
+            ? new SelectList(courses, "Id", "Name") 
+            : new SelectList(courses, "Id", "Name", id);
+    }
+
+    private async Task SetTeachersForViewBagAsync(int? id = null)
+    {
+        var teachers = await _context
+            .Users
+            .Where(x => x.AppRole == AppRole.Teacher)
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
+
+        ViewBag.Teachers = id == null 
+            ? new SelectList(teachers, "Id", "Name") 
+            : new SelectList(teachers, "Id", "Name", id);
+    }
 }
