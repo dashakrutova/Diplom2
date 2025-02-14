@@ -6,8 +6,10 @@ namespace WebApplicationMVC.Models.Database
     public class User
 	{
 		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Login { get; set; }
+		public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string? MiddleName { get; set; }
+        public string Login { get; set; }
 		public string Password { get; set; }
 		public string Number { get; set; }
 		public DateOnly DateOfBirth { get; set; }
@@ -23,7 +25,7 @@ namespace WebApplicationMVC.Models.Database
 			get
 			{
                 var claims = new List<Claim>();
-				claims.Add(new Claim(ClaimTypes.Name, Name));
+				claims.Add(new Claim(ClaimTypes.Name, FirstName));
 
 				if (AppRole == AppRole.Admin)
 				{

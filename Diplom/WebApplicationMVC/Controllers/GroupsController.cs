@@ -31,7 +31,7 @@ public class GroupsController : Controller
             Id = g.Id,
             Name = g.Name,
             CourseName = g.Course.Name,
-            TeacherName = g.Teacher.Name,
+            TeacherName = g.Teacher.FirstName,
         });
 
         return View(groupsViewModels);
@@ -61,7 +61,7 @@ public class GroupsController : Controller
             Id = group.Id,
             Name = group.Name,
             CourseName = group.Course.Name,
-            TeacherName = group.Teacher.Name,
+            TeacherName = group.Teacher.FirstName,
         };
 
         return View(gropViewModel);
@@ -201,9 +201,7 @@ public class GroupsController : Controller
             catch (DbUpdateConcurrencyException)
             {
                 if (!GroupExists(model.Id))
-                {
                     return NotFound();
-                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -280,7 +278,7 @@ public class GroupsController : Controller
         var teachers = await _context
             .Users
             .Where(x => x.AppRole == AppRole.Teacher)
-            .Select(x => new { Id = x.Id, Name = x.Name })
+            .Select(x => new { Id = x.Id, Name = x.FirstName })
             .ToListAsync();
 
         ViewBag.Teachers = id == null 
