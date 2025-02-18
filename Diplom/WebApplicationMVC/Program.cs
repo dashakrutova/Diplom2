@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using WebApplicationMVC.Auth;
 using WebApplicationMVC.Models.Database;
 

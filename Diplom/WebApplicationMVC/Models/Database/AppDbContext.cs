@@ -148,7 +148,8 @@ static class ModelBuilderExtensions
             .RuleFor(s => s.Id, (f, s) => s.Id = f.IndexFaker + 1)
 			.RuleFor(s => s.DateOfBirth, (f, s) => s.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()))
 			.RuleFor(s => s.GroupId, (f, s) => s.GroupId = f.PickRandom(groups).Id)
-			.RuleFor(s => s.ParentId, (f, s) => s.ParentId = f.PickRandom(users).Id)
+			.RuleFor(s => s.ParentId, 
+				(f, s) => s.ParentId = f.PickRandom(users.Where(u => u.AppRole == AppRole.Parent)).Id)
 			.RuleFor(s => s.RoleId, (f, s) => s.RoleId = f.PickRandom(roles).Id);
 		var students = studentsFaker.Generate(5);
 		builder.Entity<Student>().HasData(students);

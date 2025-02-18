@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using WebApplicationMVC.Models.Database;
 using WebApplicationMVC.ViewModels.Students;
 
@@ -207,7 +206,7 @@ public class StudentsController : Controller
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentExists(model.Id))
+                if (!await IsStudentExistAsync(model.Id))
                     return NotFound();
             }
             return RedirectToAction(nameof(Index));
@@ -222,21 +221,33 @@ public class StudentsController : Controller
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
+        // Todo: нужно проверять есть ли у студента уже посещения.
+        // Если есть, то запретить удаление и вывести это на
+        // страничке для пользователя
         var student = await _context.Students
             .Include(s => s.Group)
             .Include(s => s.Parent)
-            .Include(s => s.Role)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (student == null)
-        {
-            return NotFound();
-        }
 
-        return View(student);
+        if (student == null)
+            return NotFound();
+
+        var viewModel = new DeleteStudentViewModel()
+        {
+            Id = student.Id,
+            FirstName = student.FirstName,
+            LastName = student.LastName,
+            MiddleName = student.MiddleName,
+            DateOfBirth = student.DateOfBirth,
+            GroupId = student.GroupId,
+            GroupName = student.Group.Name,
+            ParentName = student.Parent.FirstName +
+            " " + student.Parent.LastName + " " + student.MiddleName,
+        };
+
+        return View(viewModel);
     }
 
     // POST: Students/Delete/5
@@ -244,19 +255,23 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
+        // Todo: нужно проверять есть ли у студента уже посещения.
+        // Если есть, то запретить удаление и вывести это на
+        // страничке для пользователя
         var student = await _context.Students.FindAsync(id);
+
         if (student != null)
         {
             _context.Students.Remove(student);
+            await _context.SaveChangesAsync();
         }
 
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool StudentExists(int id)
+    private async Task<bool> IsStudentExistAsync(int id)
     {
-        return _context.Students.Any(e => e.Id == id);
+        return await _context.Students.AnyAsync(e => e.Id == id);
     }
 
     private async Task SetGroupsForViewBagAsync(int? id = null)
