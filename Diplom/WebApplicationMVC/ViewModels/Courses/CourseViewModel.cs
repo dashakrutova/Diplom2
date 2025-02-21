@@ -1,6 +1,6 @@
-﻿namespace WebApplicationMVC.ViewModels;
+﻿namespace WebApplicationMVC.ViewModels.Courses;
 
-public class EditCourseFormModel
+public class CourseViewModel
 {
     public int Id { get; set; }
     public string Name { get; set; }

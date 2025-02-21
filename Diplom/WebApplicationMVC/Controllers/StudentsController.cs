@@ -52,8 +52,7 @@ public class StudentsController : Controller
             GroupId = student.GroupId,
             GroupName = student.Group.Name,
             ParentName = student.Parent.FirstName +
-            " " + student.Parent.LastName + " " + student.MiddleName,
-
+            " " + student.Parent.LastName + " " + student.MiddleName
         };
 
         return View(studentView);
@@ -149,8 +148,6 @@ public class StudentsController : Controller
     }
 
     // POST: Students/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, EditStudentFormModel model)

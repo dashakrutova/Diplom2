@@ -24,26 +24,23 @@ public class GroupsController : Controller
             .Groups
             .Include(g => g.Course)
             .Include(g => g.Teacher)
+            .Select(g => new GroupViewModel()
+            {
+                Id = g.Id,
+                Name = g.Name,
+                CourseName = g.Course.Name,
+                TeacherName = g.Teacher.FirstName,
+            })
             .ToListAsync();
 
-        var groupsViewModels = groups.Select(g => new GroupViewModel()
-        {
-            Id = g.Id,
-            Name = g.Name,
-            CourseName = g.Course.Name,
-            TeacherName = g.Teacher.FirstName,
-        });
-
-        return View(groupsViewModels);
+        return View(groups);
     }
 
     // GET: Groups/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
         var group = await _context
             .Groups
@@ -52,9 +49,7 @@ public class GroupsController : Controller
             .FirstOrDefaultAsync(g => g.Id == id);
 
         if (group == null)
-        {
             return NotFound();
-        }
 
         var gropViewModel = new GroupViewModel()
         {
@@ -71,19 +66,14 @@ public class GroupsController : Controller
     public async Task<IActionResult> Create()
     {
         await SetCoursesForViewBagAsync();
-
         await SetTeachersForViewBagAsync();
-
         return View();
     }
 
     // POST: Groups/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(
-        [Bind("Name,CourseId,TeacherId")] CreateGroupFormModel model)
+    public async Task<IActionResult> Create(CreateGroupFormModel model)
     {
         if (ModelState.IsValid)
         {
@@ -130,15 +120,11 @@ public class GroupsController : Controller
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
         var group = await _context.Groups.FindAsync(id);
         if (group == null)
-        {
             return NotFound();
-        }
 
         var groupEditModel = new EditGroupFormModel()
         {
@@ -149,24 +135,17 @@ public class GroupsController : Controller
         };
 
         await SetCoursesForViewBagAsync(group.CourseId);
-
         await SetTeachersForViewBagAsync(group.TeacherId);
-
         return View(groupEditModel);
     }
 
     // POST: Groups/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(
-        int id, [Bind("Id,Name,CourseId,TeacherId")] EditGroupFormModel model)
+    public async Task<IActionResult> Edit(int id, EditGroupFormModel model)
     {
         if (id != model.Id)
-        {
             return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
@@ -200,7 +179,7 @@ public class GroupsController : Controller
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(model.Id))
+                if (!await IsGroupExistAsync(model.Id))
                     return NotFound();
             }
             return RedirectToAction(nameof(Index));
@@ -208,7 +187,6 @@ public class GroupsController : Controller
 
         await SetCoursesForViewBagAsync(model.CourseId);
         await SetTeachersForViewBagAsync(model.TeacherId);
-
         return View(model);
     }
 
@@ -216,9 +194,7 @@ public class GroupsController : Controller
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
         var group = await _context
             .Groups
@@ -256,9 +232,9 @@ public class GroupsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private bool GroupExists(int id)
+    private async Task<bool> IsGroupExistAsync(int id)
     {
-        return _context.Groups.Any(e => e.Id == id);
+        return await _context.Groups.AnyAsync(e => e.Id == id);
     }
 
     private async Task SetCoursesForViewBagAsync(int? id = null)

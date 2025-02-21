@@ -1,12 +1,9 @@
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using WebApplicationMVC.Auth;
 using WebApplicationMVC.Models.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -31,7 +28,6 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
@@ -44,7 +40,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

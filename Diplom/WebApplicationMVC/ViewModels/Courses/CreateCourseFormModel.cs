@@ -1,4 +1,4 @@
-﻿namespace WebApplicationMVC.ViewModels;
+﻿namespace WebApplicationMVC.ViewModels.Courses;
 
 public class CreateCourseFormModel
 {

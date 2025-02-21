@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationMVC.Models.Database;
-using WebApplicationMVC.ViewModels;
+using WebApplicationMVC.ViewModels.Courses;
 
 namespace WebApplicationMVC.Controllers;
 
@@ -64,11 +64,9 @@ public class CoursesController : Controller
     }
 
     // POST: Courses/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,Description")] CreateCourseFormModel model)
+    public async Task<IActionResult> Create(CreateCourseFormModel model)
     {
         if (ModelState.IsValid)
         {
@@ -87,7 +85,6 @@ public class CoursesController : Controller
         return View(model);
     }
 
-
     // GET: Courses/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
@@ -98,9 +95,7 @@ public class CoursesController : Controller
 
         var course = await _context.Courses.FindAsync(id);
         if (course == null)
-        {
             return NotFound();
-        }
 
         var editCourseFormModel = new EditCourseFormModel()
         {
@@ -113,16 +108,12 @@ public class CoursesController : Controller
     }
 
     // POST: Courses/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] EditCourseFormModel model)
+    public async Task<IActionResult> Edit(int id, EditCourseFormModel model)
     {
         if (id != model.Id)
-        {
             return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
@@ -140,10 +131,8 @@ public class CoursesController : Controller
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CourseExists(model.Id))
-                {
+                if (!await IsCourseExistAsync(model.Id))
                     return NotFound();
-                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -154,17 +143,13 @@ public class CoursesController : Controller
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
         var course = await _context.Courses
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (course == null)
-        {
             return NotFound();
-        }
 
         var deleteCourseModel = new DeleteCourseFormModel()
         {
@@ -179,7 +164,7 @@ public class CoursesController : Controller
     // POST: Courses/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id, DeleteCourseFormModel model)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var course = await _context.Courses.FindAsync(id);
 
@@ -193,8 +178,8 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private bool CourseExists(int id)
+    private async Task<bool> IsCourseExistAsync(int id)
     {
-        return _context.Courses.Any(e => e.Id == id);
+        return await _context.Courses.AnyAsync(e => e.Id == id);
     }
 }
