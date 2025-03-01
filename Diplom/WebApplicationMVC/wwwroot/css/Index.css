@@ -1,4 +1,6 @@
-﻿
+﻿body {
+	padding-top: 100px;
+}
 .btn-custom {
 	background-color: #7AB8B7;
 	color: white;

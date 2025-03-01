@@ -1,181 +1,300 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationMVC.Models.Database;
+using WebApplicationMVC.ViewModels.Students;
 
-namespace WebApplicationMVC.Controllers
+namespace WebApplicationMVC.Controllers;
+
+public class StudentsController : Controller
 {
-    public class StudentsController : Controller
+    private readonly AppDbContext _context;
+
+    public StudentsController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public StudentsController(AppDbContext context)
+    // GET: Students
+    public async Task<IActionResult> Index()
+    {
+        var students = await _context
+            .Students.Select(s => new StudentViewModel()
+            {
+                Id = s.Id,
+                StudentName = s.FirstName + " " + s.LastName
+            })
+            .ToListAsync();
+
+        return View(students);
+    }
+
+    // GET: Students/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var student = await _context.Students
+            .Include(s => s.Group)
+            .Include(s => s.Parent)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (student == null)
+            return NotFound();
+
+        var studentView = new StudentDetailsViewModel()
         {
-            _context = context;
-        }
+            Id = student.Id,
+            FirstName = student.FirstName,
+            LastName = student.LastName,
+            MiddleName = student.MiddleName,
+            DateOfBirth = student.DateOfBirth,
+            GroupId = student.GroupId,
+            GroupName = student.Group.Name,
+            ParentName = student.Parent.FirstName +
+            " " + student.Parent.LastName + " " + student.MiddleName
+        };
 
-        // GET: Students
-        public async Task<IActionResult> Index()
+        return View(studentView);
+    }
+
+    // GET: Students/Create
+    public async Task<IActionResult> Create()
+    {
+        await SetParentsForViewBagAsync();
+        await SetGroupsForViewBagAsync();
+        return View();
+    }
+
+    // POST: Students/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateStudentFormModel model)
+    {
+        if (ModelState.IsValid)
         {
-            var appDbContext = _context.Students.Include(s => s.Course).Include(s => s.Group).Include(s => s.Parent).Include(s => s.Role);
-            return View(await appDbContext.ToListAsync());
-        }
+            var group = await _context
+                .Groups
+                .FirstOrDefaultAsync(x => x.Id == model.GroupId);
 
-        // GET: Students/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            if (group == null)
             {
-                return NotFound();
+                ModelState.AddModelError("GroupId", "Ошибка при выборе группы");
+                await SetParentsForViewBagAsync(model.ParentId);
+                await SetGroupsForViewBagAsync(model.GroupId);
+                return View(model);
             }
 
-            var student = await _context.Students
-                .Include(s => s.Course)
-                .Include(s => s.Group)
-                .Include(s => s.Parent)
-                .Include(s => s.Role)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            var parent = await _context
+                .Users
+                .Where(x => x.AppRole == AppRole.Parent)
+                .FirstOrDefaultAsync(x => x.Id == model.ParentId);
+
+            if (parent == null)
             {
-                return NotFound();
+                ModelState.AddModelError("ParentId", "Ошибка при выборе родителя");
+                await SetParentsForViewBagAsync(model.ParentId);
+                await SetGroupsForViewBagAsync(model.GroupId);
+                return View(model);
             }
 
-            return View(student);
-        }
-
-        // GET: Students/Create
-        public IActionResult Create()
-        {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
-            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id");
-            ViewData["ParentId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id");
-            return View();
-        }
-
-        // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,CourseId,GroupId,ParentId,RoleId")] Student student)
-        {
-            if (ModelState.IsValid)
+            var student = new Student()
             {
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id", student.GroupId);
-            ViewData["ParentId"] = new SelectList(_context.Users, "Id", "Id", student.ParentId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", student.RoleId);
-            return View(student);
-        }
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                MiddleName = model.MiddleName,
+                DateOfBirth = model.DateOfBirth,
+                Group = group,
+                Parent = parent
+            };
 
-        // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id", student.GroupId);
-            ViewData["ParentId"] = new SelectList(_context.Users, "Id", "Id", student.ParentId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", student.RoleId);
-            return View(student);
-        }
-
-        // POST: Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateOfBirth,CourseId,GroupId,ParentId,RoleId")] Student student)
-        {
-            if (id != student.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id", student.GroupId);
-            ViewData["ParentId"] = new SelectList(_context.Users, "Id", "Id", student.ParentId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", student.RoleId);
-            return View(student);
-        }
-
-        // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students
-                .Include(s => s.Course)
-                .Include(s => s.Group)
-                .Include(s => s.Parent)
-                .Include(s => s.Role)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
-        }
-
-        // POST: Students/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var student = await _context.Students.FindAsync(id);
-            if (student != null)
-            {
-                _context.Students.Remove(student);
-            }
-
+            _context.Add(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentExists(int id)
+        await SetParentsForViewBagAsync();
+        await SetGroupsForViewBagAsync();
+        return View(nameof(Create));
+    }
+
+    // GET: Students/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var student = await _context.Students.FindAsync(id);
+        if (student == null)
+            return NotFound();
+
+        await SetGroupsForViewBagAsync(student.GroupId);
+        await SetParentsForViewBagAsync(student.ParentId);
+
+        var studentEditViewModel = new EditStudentFormModel()
         {
-            return _context.Students.Any(e => e.Id == id);
+            Id = student.Id,
+            FirstName = student.FirstName,
+            LastName = student.LastName,
+            MiddleName = student.MiddleName,
+            DateOfBirth = student.DateOfBirth,
+            GroupId = student.GroupId,
+            ParentId = student.ParentId
+        };
+
+        return View(studentEditViewModel);
+    }
+
+    // POST: Students/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, EditStudentFormModel model)
+    {
+        if (id != model.Id)
+            return NotFound();
+
+        if (ModelState.IsValid)
+        {
+
+            try
+            {
+                var student = await _context
+                    .Students
+                    .FirstOrDefaultAsync(x => x.Id == model.Id);
+                if (student == null)
+                    return NotFound();
+
+                var group = await _context
+                .Groups
+                .FirstOrDefaultAsync(x => x.Id == model.GroupId);
+
+                if (group == null)
+                {
+                    ModelState.AddModelError("GroupId", "Ошибка при выборе группы");
+                    await SetParentsForViewBagAsync(model.ParentId);
+                    await SetGroupsForViewBagAsync(model.GroupId);
+                    return View(model);
+                }
+
+                var parent = await _context
+                    .Users
+                    .Where(x => x.AppRole == AppRole.Parent)
+                    .FirstOrDefaultAsync(x => x.Id == model.ParentId);
+
+                if (parent == null)
+                {
+                    ModelState.AddModelError("ParentId", "Ошибка при выборе родителя");
+                    await SetParentsForViewBagAsync(model.ParentId);
+                    await SetGroupsForViewBagAsync(model.GroupId);
+                    return View(model);
+                }
+
+                student.FirstName = model.FirstName;
+                student.LastName = model.LastName;
+                student.MiddleName = model.MiddleName;
+                student.DateOfBirth = model.DateOfBirth;
+                student.Group = group;
+                student.Parent = parent;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await IsStudentExistAsync(model.Id))
+                    return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
         }
+
+        await SetGroupsForViewBagAsync(model.GroupId);
+        await SetParentsForViewBagAsync(model.ParentId);
+        return View(model);
+    }
+
+    // GET: Students/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        // Todo: нужно проверять есть ли у студента уже посещения.
+        // Если есть, то запретить удаление и вывести это на
+        // страничке для пользователя
+        var student = await _context.Students
+            .Include(s => s.Group)
+            .Include(s => s.Parent)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (student == null)
+            return NotFound();
+
+        var viewModel = new DeleteStudentViewModel()
+        {
+            Id = student.Id,
+            FirstName = student.FirstName,
+            LastName = student.LastName,
+            MiddleName = student.MiddleName,
+            DateOfBirth = student.DateOfBirth,
+            GroupId = student.GroupId,
+            GroupName = student.Group.Name,
+            ParentName = student.Parent.FirstName +
+            " " + student.Parent.LastName + " " + student.MiddleName,
+        };
+
+        return View(viewModel);
+    }
+
+    // POST: Students/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        // Todo: нужно проверять есть ли у студента уже посещения.
+        // Если есть, то запретить удаление и вывести это на
+        // страничке для пользователя
+        var student = await _context.Students.FindAsync(id);
+
+        if (student != null)
+        {
+            _context.Students.Remove(student);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<bool> IsStudentExistAsync(int id)
+    {
+        return await _context.Students.AnyAsync(e => e.Id == id);
+    }
+
+    private async Task SetGroupsForViewBagAsync(int? id = null)
+    {
+        var groups = await _context
+            .Groups
+            .Select(x => new { Id = x.Id, Name = x.Name })
+            .ToListAsync();
+
+        ViewBag.Groups = id == null
+            ? new SelectList(groups, "Id", "Name")
+            : new SelectList(groups, "Id", "Name", id);
+    }
+
+    private async Task SetParentsForViewBagAsync(int? id = null)
+    {
+        var parents = await _context
+            .Users
+            .Where(x => x.AppRole == AppRole.Parent)
+            .Select(x => new 
+            { 
+                Id = x.Id, 
+                Name = x.LastName + " " + x.FirstName + " " + x.MiddleName 
+            })
+            .ToListAsync();
+
+        ViewBag.Parents = id == null
+            ? new SelectList(parents, "Id", "Name")
+            : new SelectList(parents, "Id", "Name", id);
     }
 }

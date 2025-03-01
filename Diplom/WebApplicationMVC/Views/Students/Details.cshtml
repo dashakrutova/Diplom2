@@ -1,4 +1,4 @@
-﻿@model WebApplicationMVC.Models.Database.Student
+﻿@model WebApplicationMVC.ViewModels.Students.StudentDetailsViewModel
 
 @{
     // Layout = null;
@@ -20,11 +20,26 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            Имя
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+                @Html.DisplayFor(model => model.FirstName)
         </dd>
+
+        <dt class="col-sm-2">
+            Фамилия
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt class="col-sm-2">
+            Отчеcтво
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MiddleName)
+        </dd>
+
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DateOfBirth)
         </dt>
@@ -32,28 +47,17 @@
             @Html.DisplayFor(model => model.DateOfBirth)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Course)
+                Группа
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Course.Id)
+                <a asp-controller="Groups" asp-action="Details" 
+                asp-route-id="@Model.GroupId">@Html.DisplayFor(model => model.GroupName)</a>
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Group)
+            Родитель
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Group.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Parent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Parent.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role.Id)
+            @Html.DisplayFor(model => model.ParentName)
         </dd>
     </dl>
 </div>

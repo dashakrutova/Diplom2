@@ -27,22 +27,27 @@ public class AuthController : Controller
     public async Task<IActionResult> Login(LoginFormModel model)
     {
         User? user = await _userManager.LoginAsync(model.Login, model.Password);
-        if (user != null)
+        if (user == null)
         {
-            var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
-
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(AuthSettings.AuthCookieName,
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = false,
-                });
-            //HttpContext.Response.Cookies.Append("Abrakadabra", user.Login);
+            ModelState.AddModelError("", "Неправильный email или пароль");
+            return View(model);
         }
 
-        return RedirectToAction("Index", "Home");
+         var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
+
+         var principal = new ClaimsPrincipal(identity);
+
+         await HttpContext.SignInAsync(AuthSettings.AuthCookieName,
+             principal,
+             new AuthenticationProperties
+             {
+                 IsPersistent = false,
+             });
+
+         if (user.AppRole == AppRole.Admin)
+             return RedirectToAction("Index", "Admin");
+
+         return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]

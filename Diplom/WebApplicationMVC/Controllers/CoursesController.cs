@@ -1,164 +1,185 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationMVC.Models.Database;
+using WebApplicationMVC.ViewModels.Courses;
 
-namespace WebApplicationMVC.Controllers
+namespace WebApplicationMVC.Controllers;
+
+[Authorize("admin")]
+public class CoursesController : Controller
 {
-    public class CoursesController : Controller
+    private readonly AppDbContext _context;
+
+    public CoursesController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public CoursesController(AppDbContext context)
+    // GET: Courses
+    public async Task<IActionResult> Index()
+    {
+        var courses = await _context.Courses.ToListAsync();
+
+        var courseViewModels = courses
+            .Select(c => new CourseViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description
+            })
+            .ToList();
+        return View(courseViewModels);
+    }
+
+    // GET: Courses/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        // GET: Courses
-        public async Task<IActionResult> Index()
+        var course = await _context.Courses
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (course == null)
         {
-            var appDbContext = _context.Courses.Include(c => c.Teacher);
-            return View(await appDbContext.ToListAsync());
+            return NotFound();
         }
 
-        // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        var courseViewModel = new CourseViewModel()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            Id = course.Id,
+            Name = course.Name,
+            Description = course.Description
+        };
 
-            var course = await _context.Courses
-                .Include(c => c.Teacher)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
-            {
-                return NotFound();
-            }
+        return View(courseViewModel);
+    }
 
-            return View(course);
-        }
+    // GET: Courses/Create
+    public IActionResult Create()
+    {
+        return View();
+    }
 
-        // GET: Courses/Create
-        public IActionResult Create()
+    // POST: Courses/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateCourseFormModel model)
+    {
+        if (ModelState.IsValid)
         {
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
-
-        // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,TeacherId")] Course course)
-        {
-            if (ModelState.IsValid)
+            var course = new Course()
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id", course.TeacherId);
-            return View(course);
-        }
+                Name = model.Name,
+                Description = model.Description
+            };
 
-        // GET: Courses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var course = await _context.Courses.FindAsync(id);
-            if (course == null)
-            {
-                return NotFound();
-            }
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id", course.TeacherId);
-            return View(course);
-        }
-
-        // POST: Courses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,TeacherId")] Course course)
-        {
-            if (id != course.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(course);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CourseExists(course.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id", course.TeacherId);
-            return View(course);
-        }
-
-        // GET: Courses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var course = await _context.Courses
-                .Include(c => c.Teacher)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            return View(course);
-        }
-
-        // POST: Courses/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var course = await _context.Courses.FindAsync(id);
-            if (course != null)
-            {
-                _context.Courses.Remove(course);
-            }
-
+            _context.Add(course);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+        
+        return View(model);
+    }
 
-        private bool CourseExists(int id)
+    // GET: Courses/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
         {
-            return _context.Courses.Any(e => e.Id == id);
+            return NotFound();
         }
+
+        var course = await _context.Courses.FindAsync(id);
+        if (course == null)
+            return NotFound();
+
+        var editCourseFormModel = new EditCourseFormModel()
+        {
+            Id = course.Id,
+            Name = course.Name,
+            Description = course.Description
+        };
+        
+        return View(editCourseFormModel);
+    }
+
+    // POST: Courses/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, EditCourseFormModel model)
+    {
+        if (id != model.Id)
+            return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == model.Id);
+
+                if (course == null)
+                    return NotFound();
+
+                course.Name = model.Name;
+                course.Description = model.Description;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await IsCourseExistAsync(model.Id))
+                    return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        return View(model);
+    }
+
+    // GET: Courses/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var course = await _context.Courses
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (course == null)
+            return NotFound();
+
+        var deleteCourseModel = new DeleteCourseFormModel()
+        {
+            Id = course.Id,
+            Name = course.Name,
+            Description = course.Description,
+        };
+
+        return View(deleteCourseModel);
+    }
+
+    // POST: Courses/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var course = await _context.Courses.FindAsync(id);
+
+        if (course != null)
+        {
+            // Todo: необходимо проверять есть ли у кура группы. Если есть, то запретить удаление
+            _context.Courses.Remove(course);
+        }
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<bool> IsCourseExistAsync(int id)
+    {
+        return await _context.Courses.AnyAsync(e => e.Id == id);
     }
 }

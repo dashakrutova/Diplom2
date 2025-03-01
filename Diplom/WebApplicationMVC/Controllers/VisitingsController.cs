@@ -48,7 +48,7 @@ namespace WebApplicationMVC.Controllers
         // GET: Visitings/Create
         public IActionResult Create()
         {
-            ViewData["ScheduleEntryId"] = new SelectList(_context.ScheduleEntries, "Id", "Id");
+            ViewData["ScheduleEntryId"] = new SelectList(_context.Lessons, "Id", "Id");
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Id");
             return View();
         }
@@ -66,7 +66,7 @@ namespace WebApplicationMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ScheduleEntryId"] = new SelectList(_context.ScheduleEntries, "Id", "Id", visiting.ScheduleEntryId);
+            ViewData["ScheduleEntryId"] = new SelectList(_context.Lessons, "Id", "Id", visiting.ScheduleEntryId);
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Id", visiting.StatusId);
             return View(visiting);
         }
@@ -84,7 +84,7 @@ namespace WebApplicationMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["ScheduleEntryId"] = new SelectList(_context.ScheduleEntries, "Id", "Id", visiting.ScheduleEntryId);
+            ViewData["ScheduleEntryId"] = new SelectList(_context.Lessons, "Id", "Id", visiting.ScheduleEntryId);
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Id", visiting.StatusId);
             return View(visiting);
         }
@@ -121,7 +121,7 @@ namespace WebApplicationMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ScheduleEntryId"] = new SelectList(_context.ScheduleEntries, "Id", "Id", visiting.ScheduleEntryId);
+            ViewData["ScheduleEntryId"] = new SelectList(_context.Lessons, "Id", "Id", visiting.ScheduleEntryId);
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Id", visiting.StatusId);
             return View(visiting);
         }

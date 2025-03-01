@@ -1,4 +1,4 @@
-﻿@model WebApplicationMVC.Models.Database.Student
+﻿@model WebApplicationMVC.ViewModels.Students.DeleteStudentViewModel
 
 @{
     // Layout = null;
@@ -20,41 +20,44 @@
         <h4>Ученик</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+        <dt class="col-sm-2">
+            Имя
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class="col-sm-2">
+            Фамилия
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt class="col-sm-2">
+            Отчеcтво
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MiddleName)
+        </dd>
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DateOfBirth)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateOfBirth)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Course)
+        <dt class="col-sm-2">
+            Группа
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Course.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GroupName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Group)
+        <dt class="col-sm-2">
+            Родитель
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Group.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Parent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Parent.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ParentName)
         </dd>
     </dl>
     
