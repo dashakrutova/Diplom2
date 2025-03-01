@@ -18,7 +18,7 @@ public class AppDbContext : DbContext
 	public DbSet<Course> Courses { get; set; }
 	public DbSet<Group> Groups { get; set; }
 	public DbSet<Status> Statuses { get; set; }
-	public DbSet<ScheduleEntry> ScheduleEntries { get; set; }
+	public DbSet<Lesson> Lessons { get; set; }
 	public DbSet<Visiting> Visitings { get; set; }
 
 

@@ -1,4 +1,4 @@
-﻿@model WebApplicationMVC.Models.Database.ScheduleEntry
+﻿@model WebApplicationMVC.ViewModels.Lessons.EditLessonFormModel
 
 @{
     // Layout = null;
@@ -23,19 +23,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="GroupId" class="control-label"></label>
-                <select asp-for="GroupId" class="form-control" asp-items="ViewBag.GroupId"></select>
+                <label asp-for="GroupId" class="control-label">Group</label>
+                <select asp-for="GroupId" class="form-control" asp-items="ViewBag.Groups"></select>
                 <span asp-validation-for="GroupId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Start" class="control-label"></label>
                 <input asp-for="Start" class="form-control" />
                 <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
             </div>
             <div class="form-group">
                     <input type="submit" value="Save" class="btn btn-custom" />

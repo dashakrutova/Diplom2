@@ -153,9 +153,7 @@ public class StudentsController : Controller
     public async Task<IActionResult> Edit(int id, EditStudentFormModel model)
     {
         if (id != model.Id)
-        {
             return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
