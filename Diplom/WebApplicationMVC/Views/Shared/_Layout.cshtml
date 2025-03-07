@@ -55,7 +55,14 @@
                             </a>
                             @if (User.Identity?.IsAuthenticated ?? false)
                             {
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">@(User.Identity?.Name)</a>
+                                @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
+                                {
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">@(User.Identity?.Name)</a>
+                                }
+                                else if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Parent.ToString(), "true"))
+                                {
+                                    <a class="nav-link text-dark" asp-controller="Parent" asp-action="Index">@(User.Identity?.Name)</a>
+                                }
                             }
                             else
                             {

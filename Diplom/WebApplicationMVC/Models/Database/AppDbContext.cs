@@ -117,9 +117,21 @@ static class ModelBuilderExtensions
 			    LastName = "Родитель",
 			    Number = "000",
 			    RoleId = roles.First().Id,
-			    Login = "boris_parent@mail.ru",
+			    Login = "parent@mail.ru",
 			    Password = "parent",
 			    AppRole = AppRole.Parent
+			});
+
+			users.Add(new User()
+			{
+				Id = users.Max(x => x.Id) + 1,
+				FirstName = "Анна",
+				LastName = "Родитель",
+				Number = "000",
+				RoleId = roles.First().Id,
+				Login = "anna_parent@mail.ru",
+				Password = "parent",
+				AppRole = AppRole.Parent
 			});
 
         builder.Entity<User>().HasData(users);
@@ -139,8 +151,6 @@ static class ModelBuilderExtensions
 		var groups = groupsFaker.Generate(3);
 		builder.Entity<Group>().HasData(groups);
 		
-
-
 		var studentsFaker = new Faker<Student>("ru")
 			.RuleFor(s => s.FirstName, (f, s) => s.FirstName = f.Person.FirstName)
             .RuleFor(s => s.LastName, (f, s) => s.LastName = f.Person.LastName)
@@ -154,7 +164,13 @@ static class ModelBuilderExtensions
 		var students = studentsFaker.Generate(5);
 		builder.Entity<Student>().HasData(students);
 
+		var lessonsFaker = new Faker<Lesson>("ru")
+			.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)
+			.RuleFor(l => l.GroupId, (f, l) => l.GroupId = f.PickRandom(groups).Id)
+			.RuleFor(l => l.Start, f => f.Date.Between(DateTime.Now.AddMonths(-3), DateTime.Now.AddMonths(+3)));
+		var lessons = lessonsFaker.Generate(60);
+        builder.Entity<Lesson>().HasData(lessons);
 
-		return builder;
+        return builder;
 	}
 }

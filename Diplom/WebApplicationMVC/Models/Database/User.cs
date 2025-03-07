@@ -26,10 +26,16 @@ namespace WebApplicationMVC.Models.Database
 			{
                 var claims = new List<Claim>();
 				claims.Add(new Claim(ClaimTypes.Name, FirstName));
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, Id.ToString()));
 
-				if (AppRole == AppRole.Admin)
+                if (AppRole == AppRole.Admin)
 				{
                     claims.Add(new Claim(AppRole.Admin.ToString(), "true"));
+                }
+
+				if (AppRole == AppRole.Parent)
+				{
+                    claims.Add(new Claim(AppRole.Parent.ToString(), "true"));
                 }
 
 				return claims;
