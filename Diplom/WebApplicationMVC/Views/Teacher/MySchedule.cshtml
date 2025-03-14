@@ -82,22 +82,25 @@
     document.querySelectorAll('.calendar-day').forEach(cell => {
         cell.addEventListener('click', () => {
             const date = cell.getAttribute('data-date');
-            const filteredLessons = lessons.filter(l => l.Date.startsWith(date)); // Находим все занятия на дату
+            const filteredLessons = lessons.filter(l => l.Date.startsWith(date)); // Найти все занятия на дату
 
             if (filteredLessons.length > 0) {
                 document.getElementById('lessonDetails').style.display = 'block';
                 document.getElementById('lessonDate').innerText = date;
 
-                // Очищаем предыдущий список занятий
+                // Очищаем список перед добавлением новых занятий
                 const lessonList = document.getElementById('lessonList');
                 lessonList.innerHTML = '';
 
-                // Добавляем все занятия на выбранную дату
+                // Добавляем все занятия на дату
                 filteredLessons.forEach(lesson => {
                     const [lessonDate, lessonTime] = lesson.Date.split('T');
                     const lessonItem = document.createElement('li');
+
                     lessonItem.innerHTML = `
+                        <a href="/Teacher/AddAttendances?id=${lesson.Id}" class="lesson-link">Перейти к занятию</a>
                         <strong>Время:</strong> ${lessonTime.substring(0, 5)}<br>
+                        <strong>Группа:</strong> ${lesson.GroupName}<br>
                         <strong>Предмет:</strong> ${lesson.CourseName}<br>
                         <strong>Преподаватель:</strong> ${lesson.Teacher}<br>
                         <strong>Заметки:</strong> ${lesson.Notes}<br>

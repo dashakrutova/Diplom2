@@ -5,6 +5,7 @@ public class LessonViewModel
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public string CourseName { get; set; }
+    public string GroupName { get; set; }
     public string Teacher { get; set; }
     public string Notes { get; set; }
 }

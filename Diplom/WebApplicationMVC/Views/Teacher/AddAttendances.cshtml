@@ -1,0 +1,59 @@
+﻿@model WebApplicationMVC.ViewModels.Teachers.AddAttendanceFormModel
+
+@{
+    ViewData["Title"] = "Редактирование посещаемости";
+}
+
+<h2>Редактирование посещаемости</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Lesson ID</th>
+        <td>@Model.LessonId</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td>@Model.Date.ToString("yyyy-MM-dd HH:mm")</td>
+    </tr>
+    <tr>
+        <th>Course Name</th>
+        <td>@Model.CourseName</td>
+    </tr>
+    <tr>
+        <th>Group Name</th>
+        <td>@Model.GroupName</td>
+    </tr>
+</table>
+
+<form asp-action="AddAttendances" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Студент</th>
+                <th>Посещение</th>
+            </tr>
+        </thead>
+        <tbody>
+            <input type="hidden" asp-for="@Model.LessonId" />
+            <input type="hidden" asp-for="@Model.Date" />
+            <input type="hidden" asp-for="@Model.CourseName" />
+            <input type="hidden" asp-for="@Model.GroupName" />
+            @for (int i = 0; i < Model.Attendances.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" asp-for="@Model.Attendances[i].Id" />
+                        <input type="hidden" asp-for="@Model.Attendances[i].StudentId" />
+                        <input type="hidden" asp-for="@Model.LessonId" />
+                        <input type="hidden" asp-for="@Model.Attendances[i].StudentName" />
+                        @Model.Attendances[i].StudentName
+                    </td>
+                    <td>
+                        <input type="checkbox" asp-for="@Model.Attendances[i].IsVisited" checked="@(Model.Attendances[i].IsVisited ? "checked" : null)" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
