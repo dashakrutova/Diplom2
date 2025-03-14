@@ -63,6 +63,10 @@
                                 {
                                     <a class="nav-link text-dark" asp-controller="Parent" asp-action="Index">@(User.Identity?.Name)</a>
                                 }
+                                else if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Teacher.ToString(), "true"))
+                                {
+                                    <a class="nav-link text-dark" asp-controller="Teacher" asp-action="Index">@(User.Identity?.Name)</a>
+                                }
                             }
                             else
                             {

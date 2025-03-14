@@ -27,6 +27,9 @@ builder.Services.AddAuthorization(options =>
 
 	options.AddPolicy("parent",
 		policy => policy.RequireClaim(AppRole.Parent.ToString(), "true"));
+
+    options.AddPolicy("teacher",
+        policy => policy.RequireClaim(AppRole.Teacher.ToString(), "true"));
 });
 
 var app = builder.Build();

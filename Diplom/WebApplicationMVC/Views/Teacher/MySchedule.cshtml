@@ -1,0 +1,175 @@
+﻿@model WebApplicationMVC.ViewModels.Teachers.CalendarViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+@{
+    string monthName = System.Globalization.CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat.GetMonthName(Model.Month);
+}
+
+<h2>Календарь - @monthName @Model.Year</h2>
+
+<div class="month-navigation">
+    <a href="@Url.Action("MySchedule", new { year = Model.Month == 1 ? Model.Year - 1 : Model.Year, month = Model.Month == 1 ? 12 : Model.Month - 1 })">« Предыдущий месяц</a>
+    <a href="@Url.Action("MySchedule", new { year = Model.Month == 12 ? Model.Year + 1 : Model.Year, month = Model.Month == 12 ? 1 : Model.Month + 1 })">Следующий месяц »</a>
+</div>
+
+<table class="calendar">
+    <thead>
+        <tr>
+            <th>Пн</th>
+            <th>Вт</th>
+            <th>Ср</th>
+            <th>Чт</th>
+            <th>Пт</th>
+            <th>Сб</th>
+            <th>Вс</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var firstDay = new DateTime(Model.Year, Model.Month, 1);
+            var daysInMonth = DateTime.DaysInMonth(Model.Year, Model.Month);
+            var startDayOfWeek = (int)firstDay.DayOfWeek;
+            if (startDayOfWeek == 0) startDayOfWeek = 7;
+        }
+        <tr>
+            @for (int i = 1; i < startDayOfWeek; i++)
+            {
+                <td></td>
+            }
+            @for (int day = 1; day <= daysInMonth; day++)
+            {
+                var date = new DateTime(Model.Year, Model.Month, day);
+                var lesson = Model.Lessons.FirstOrDefault(l => l.Date.Date == date);
+                var isLessonDay = lesson != null;
+                var isAlertDay = Model.AlertDates.Contains(date);
+
+                <td class="calendar-day" data-date="@date.ToString("yyyy-MM-dd")">
+                    @if (isLessonDay)
+                    {
+                        <div class="lesson-day">@day</div>
+                    }
+                    else
+                    {
+                        @day
+                    }
+                    @if (isAlertDay)
+                    {
+                        <div class="alert-sign">!</div>
+                    }
+                </td>
+
+                if ((startDayOfWeek + day - 1) % 7 == 0)
+                {
+                    @:</tr><tr>
+                }
+            }
+        </tr>
+    </tbody>
+</table>
+
+<div id="lessonDetails" class="lesson-details" style="margin-top: 20px; display:none;">
+    <h3>Информация о занятиях</h3>
+    <p><strong>Дата:</strong> <span id="lessonDate"></span></p>
+    <ul id="lessonList"></ul>
+</div>
+
+<script>
+    const lessons = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Lessons));
+
+    document.querySelectorAll('.calendar-day').forEach(cell => {
+        cell.addEventListener('click', () => {
+            const date = cell.getAttribute('data-date');
+            const filteredLessons = lessons.filter(l => l.Date.startsWith(date)); // Находим все занятия на дату
+
+            if (filteredLessons.length > 0) {
+                document.getElementById('lessonDetails').style.display = 'block';
+                document.getElementById('lessonDate').innerText = date;
+
+                // Очищаем предыдущий список занятий
+                const lessonList = document.getElementById('lessonList');
+                lessonList.innerHTML = '';
+
+                // Добавляем все занятия на выбранную дату
+                filteredLessons.forEach(lesson => {
+                    const [lessonDate, lessonTime] = lesson.Date.split('T');
+                    const lessonItem = document.createElement('li');
+                    lessonItem.innerHTML = `
+                        <strong>Время:</strong> ${lessonTime.substring(0, 5)}<br>
+                        <strong>Предмет:</strong> ${lesson.CourseName}<br>
+                        <strong>Преподаватель:</strong> ${lesson.Teacher}<br>
+                        <strong>Заметки:</strong> ${lesson.Notes}<br>
+                        <hr>
+                    `;
+                    lessonList.appendChild(lessonItem);
+                });
+            } else {
+                document.getElementById('lessonDetails').style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<style>
+    body{margin-top: 90px;}
+
+    .calendar {
+        width: 60%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .calendar th, .calendar td {
+        width: 14%;
+        text-align: center;
+        height: 40px;
+        position: relative;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    .lesson-day {
+        background-color: #c7f7c3;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .alert-sign {
+        color: red;
+        font-weight: bold;
+        position: absolute;
+        top: 2px;
+        right: 12px;
+        font-size: 14px;
+    }
+
+    .lesson-details {
+        border: 1px solid #ddd;
+        padding: 10px;
+        background-color: #f9f9f9;
+        width: 250px;
+    }
+
+    .month-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+
+    .month-navigation a {
+        text-decoration: none;
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+</style>

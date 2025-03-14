@@ -20,7 +20,8 @@ public class AppDbContext : DbContext
 	public DbSet<Status> Statuses { get; set; }
 	public DbSet<Lesson> Lessons { get; set; }
 	public DbSet<Visiting> Visitings { get; set; }
-
+	public DbSet<Attendance> Attendances { get; set; }
+	 
 
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

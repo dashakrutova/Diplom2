@@ -1,7 +1,8 @@
-﻿namespace WebApplicationMVC.ViewModels.Parents;
+﻿namespace WebApplicationMVC.ViewModels.Teachers;
 
 public class LessonViewModel
 {
+    public int Id { get; set; }
     public DateTime Date { get; set; }
     public string CourseName { get; set; }
     public string Teacher { get; set; }

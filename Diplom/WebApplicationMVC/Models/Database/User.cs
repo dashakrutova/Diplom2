@@ -1,45 +1,49 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 
-namespace WebApplicationMVC.Models.Database
+namespace WebApplicationMVC.Models.Database;
+
+public class User
 {
-    public class User
+	public int Id { get; set; }
+	public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string? MiddleName { get; set; }
+    public string Login { get; set; }
+	public string Password { get; set; }
+	public string Number { get; set; }
+	public DateOnly DateOfBirth { get; set; }
+	public int RoleId { get; set; }
+	public Role Role { get; set; }
+	public List<Student> Student { get; set; }
+
+    public AppRole AppRole { get; set; }
+
+	[NotMapped]
+	public List<Claim> Claims
 	{
-		public int Id { get; set; }
-		public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string? MiddleName { get; set; }
-        public string Login { get; set; }
-		public string Password { get; set; }
-		public string Number { get; set; }
-		public DateOnly DateOfBirth { get; set; }
-		public int RoleId { get; set; }
-		public Role Role { get; set; }
-		public List<Student> Student { get; set; }
-
-        public AppRole AppRole { get; set; }
-
-		[NotMapped]
-        public List<Claim> Claims
+		get
 		{
-			get
+            var claims = new List<Claim>();
+			claims.Add(new Claim(ClaimTypes.Name, FirstName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, Id.ToString()));
+
+            if (AppRole == AppRole.Admin)
 			{
-                var claims = new List<Claim>();
-				claims.Add(new Claim(ClaimTypes.Name, FirstName));
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, Id.ToString()));
+				claims.Add(new Claim(AppRole.Admin.ToString(), "true"));
+            }
 
-                if (AppRole == AppRole.Admin)
-				{
-                    claims.Add(new Claim(AppRole.Admin.ToString(), "true"));
-                }
+			if (AppRole == AppRole.Parent)
+			{
+				claims.Add(new Claim(AppRole.Parent.ToString(), "true"));
+            }
 
-				if (AppRole == AppRole.Parent)
-				{
-                    claims.Add(new Claim(AppRole.Parent.ToString(), "true"));
-                }
+			if (AppRole == AppRole.Teacher)
+			{
+                claims.Add(new Claim(AppRole.Teacher.ToString(), "true"));
+            }
 
-				return claims;
-			}
+			return claims;
 		}
 	}
 }
