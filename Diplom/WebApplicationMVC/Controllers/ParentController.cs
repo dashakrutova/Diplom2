@@ -80,12 +80,19 @@ public class ParentController : Controller
             })
             .ToListAsync();
 
+        var skippedLesonsDates = await _context
+            .Attendances
+            .Include(a => a.Lesson)
+            .Where(a => a.StudentId == student.Id && !a.IsVisited)
+            .Select(a => a.Lesson.Start.Date)
+            .ToListAsync();
+
         var model = new CalendarViewModel
         {
             Year = (int)year,
             Month = (int)month,
             Lessons = lessons,
-            AlertDates = new()
+            AlertDates = skippedLesonsDates
         };
 
         return View(model);
