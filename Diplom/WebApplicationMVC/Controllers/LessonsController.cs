@@ -6,6 +6,7 @@ using WebApplicationMVC.ViewModels.Lessons;
 
 namespace WebApplicationMVC.Controllers;
 
+// Todo: нужна ли здесь авторизация?
 public class LessonsController : Controller
 {
     private readonly AppDbContext _context;
@@ -207,6 +208,8 @@ public class LessonsController : Controller
     // GET: Lessons/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
+        // Todo: Должны убедиться, что занятие нельзя удалить
+        // если по нему существует отчет о посешении или оно в прошлом
         if (id == null)
             return NotFound();
 

@@ -14,7 +14,6 @@ public class AppDbContext : DbContext
 
 	public DbSet<User> Users { get; set; }
 	public DbSet<Student> Students { get; set; }
-	public DbSet<Role> Roles { get; set; }
 	public DbSet<Course> Courses { get; set; }
 	public DbSet<Group> Groups { get; set; }
 	public DbSet<Status> Statuses { get; set; }
@@ -48,14 +47,6 @@ static class ModelBuilderExtensions
 
         Randomizer.Seed = new Random(8675309);
 
-        var roles = new List<Role>
-		{
-			new Role() { Id = 1, Name = "Admin" },
-			new Role() { Id = 2, Name = "Teacher" },
-			new Role() { Id = 3, Name = "Parent" }
-		};
-		builder.Entity<Role>().HasData(roles);
-
 		var statuses = new List<Status>
 		{
 			new Status { Id = 1, Value = true },
@@ -64,27 +55,25 @@ static class ModelBuilderExtensions
 		builder.Entity<Status>().HasData(statuses);
 
 		var usersFaker = new Faker<User>("ru")
-            .RuleFor(u => u.FirstName, (f, u) => u.FirstName = f.Person.FirstName)
-            .RuleFor(u => u.LastName, (f, u) => u.LastName = f.Person.LastName)
-            .RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker)
+			.RuleFor(u => u.FirstName, (f, u) => u.FirstName = f.Person.FirstName)
+			.RuleFor(u => u.LastName, (f, u) => u.LastName = f.Person.LastName)
+			.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker)
 			.RuleFor(u => u.Login, (f, u) => u.Login = f.Person.UserName)
 			.RuleFor(u => u.Password, (f, u) => u.Password = f.Internet.Password())
 			.RuleFor(u => u.Number, (f, u) => u.Number = f.Phone.PhoneNumber())
-			.RuleFor(u => u.DateOfBirth, (f, u) => u.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()))
-			.RuleFor(s => s.RoleId, (f, s) => s.RoleId = f.PickRandom(roles).Id);
+			.RuleFor(u => u.DateOfBirth, (f, u) => u.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()));
 		_ = usersFaker.Generate(1);
 		var users = usersFaker.Generate(5);
 
             users.Add(new User()
             {
-			Id = users.Max(x => x.Id) + 1,
-			FirstName = "Админ",
-			LastName = "Админов",
-			Number = "123",
-			RoleId = roles.First().Id,
-                Login = "admin@mail.ru",
-                Password = "admin",
-			AppRole = AppRole.Admin,
+				Id = users.Max(x => x.Id) + 1,
+				FirstName = "Админ",
+				LastName = "Админов",
+				Number = "123",
+				Login = "admin@mail.ru",
+				Password = "admin",
+				AppRole = AppRole.Admin,
             });
 
             users.Add(new User()
@@ -93,10 +82,9 @@ static class ModelBuilderExtensions
                 FirstName = "Мария",
 				LastName = "Учитель",
                 Number = "456",
-                RoleId = roles.First().Id,
                 Login = "teacher@mail.ru",
                 Password = "teacher",
-			AppRole = AppRole.Teacher
+				AppRole = AppRole.Teacher
             });
 
             users.Add(new User()
@@ -105,7 +93,6 @@ static class ModelBuilderExtensions
                 FirstName = "Виталик",
                 LastName = "Учитель",
                 Number = "789",
-                RoleId = roles.First().Id,
                 Login = "vitalik_teacher@mail.ru",
                 Password = "teacher",
                 AppRole = AppRole.Teacher
@@ -117,7 +104,6 @@ static class ModelBuilderExtensions
 			    FirstName = "Борис",
 			    LastName = "Родитель",
 			    Number = "000",
-			    RoleId = roles.First().Id,
 			    Login = "parent@mail.ru",
 			    Password = "parent",
 			    AppRole = AppRole.Parent
@@ -129,7 +115,6 @@ static class ModelBuilderExtensions
 				FirstName = "Анна",
 				LastName = "Родитель",
 				Number = "000",
-				RoleId = roles.First().Id,
 				Login = "anna_parent@mail.ru",
 				Password = "parent",
 				AppRole = AppRole.Parent
@@ -151,17 +136,16 @@ static class ModelBuilderExtensions
 			.RuleFor(u => u.TeacherId, (f, u) => u.TeacherId = f.PickRandom(users.Where(x => x.AppRole == AppRole.Teacher)).Id);
 		var groups = groupsFaker.Generate(3);
 		builder.Entity<Group>().HasData(groups);
-		
+
 		var studentsFaker = new Faker<Student>("ru")
 			.RuleFor(s => s.FirstName, (f, s) => s.FirstName = f.Person.FirstName)
-            .RuleFor(s => s.LastName, (f, s) => s.LastName = f.Person.LastName)
-            //.RuleFor(s => s.MiddleName, (f, s) => s.MiddleName = f.Person.)
-            .RuleFor(s => s.Id, (f, s) => s.Id = f.IndexFaker + 1)
+			.RuleFor(s => s.LastName, (f, s) => s.LastName = f.Person.LastName)
+			//.RuleFor(s => s.MiddleName, (f, s) => s.MiddleName = f.Person.)
+			.RuleFor(s => s.Id, (f, s) => s.Id = f.IndexFaker + 1)
 			.RuleFor(s => s.DateOfBirth, (f, s) => s.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()))
 			.RuleFor(s => s.GroupId, (f, s) => s.GroupId = f.PickRandom(groups).Id)
-			.RuleFor(s => s.ParentId, 
-				(f, s) => s.ParentId = f.PickRandom(users.Where(u => u.AppRole == AppRole.Parent)).Id)
-			.RuleFor(s => s.RoleId, (f, s) => s.RoleId = f.PickRandom(roles).Id);
+			.RuleFor(s => s.ParentId,
+				(f, s) => s.ParentId = f.PickRandom(users.Where(u => u.AppRole == AppRole.Parent)).Id);
 		var students = studentsFaker.Generate(5);
 		builder.Entity<Student>().HasData(students);
 

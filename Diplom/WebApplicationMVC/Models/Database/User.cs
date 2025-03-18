@@ -13,8 +13,6 @@ public class User
 	public string Password { get; set; }
 	public string Number { get; set; }
 	public DateOnly DateOfBirth { get; set; }
-	public int RoleId { get; set; }
-	public Role Role { get; set; }
 	public List<Student> Student { get; set; }
 
     public AppRole AppRole { get; set; }
@@ -45,5 +43,20 @@ public class User
 
 			return claims;
 		}
+	}
+
+	public string GetRole()
+	{
+		switch (AppRole)
+		{
+			case AppRole.Admin:
+				return "Администратор";
+            case AppRole.Teacher:
+                return "Преподователь";
+			case AppRole.Parent:
+				return "Родитель";
+			default:
+				return "Неопределена";
+        }
 	}
 }
