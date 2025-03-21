@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationMVC.Models.Database;
@@ -7,6 +8,7 @@ using WebApplicationMVC.ViewModels.Lessons;
 namespace WebApplicationMVC.Controllers;
 
 // Todo: нужна ли здесь авторизация?
+[Authorize("admin")]
 public class LessonsController : Controller
 {
     private readonly AppDbContext _context;

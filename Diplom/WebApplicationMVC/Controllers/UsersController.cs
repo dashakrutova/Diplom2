@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
 using WebApplicationMVC.Models.Database;
 using WebApplicationMVC.ViewModels.Users;
 
@@ -66,8 +65,6 @@ public class UsersController : Controller
     }
 
     // POST: Users/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateUserFormModel model)
@@ -81,8 +78,6 @@ public class UsersController : Controller
 
         if (ModelState.IsValid)
         {
-            
-
             var user = new User()
             {
                 FirstName = model.FirstName,
@@ -113,65 +108,85 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
+        var model = new EditUserFormModel()
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            MiddleName = user.MiddleName,
+            Login = user.Login,
+            Number = user.Number,
+            DateOfBirth = user.DateOfBirth.ToDateTime(TimeOnly.MinValue)
+        };
 
-
-        //ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
-        return View(user);
+        return View(model);
     }
 
     // POST: Users/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Login,Password,Number,DateOfBirth,RoleId")] User user)
+    public async Task<IActionResult> Edit(int id, EditUserFormModel model)
     {
-        if (id != user.Id)
-        {
+        if (id != model.Id)
             return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
             try
             {
-                _context.Update(user);
+                var user = await _context
+                    .Users
+                    .FirstOrDefaultAsync(u => u.Id == model.Id && u.Login == model.Login);
+
+                if (user == null)
+                    return NotFound();
+
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.MiddleName = model.MiddleName;
+                user.Number = model.Number;
+                user.DateOfBirth = DateOnly.FromDateTime(model.DateOfBirth);
+
+                if (!string.IsNullOrEmpty(model.Password))
+                    user.Password = model.Password;
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(user.Id))
-                {
+                if (!UserExists(model.Id))
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
             return RedirectToAction(nameof(Index));
         }
-        //ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
-        return View(user);
+        return View(model);
     }
 
     // GET: Users/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
-        {
             return NotFound();
-        }
 
         var user = await _context.Users
-            //.Include(u => u.Role)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (user == null)
-        {
-            return NotFound();
-        }
 
-        return View(user);
+        if (user == null)
+            return NotFound();
+
+        var model = new DeleteUserFormModel()
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            MiddleName = user.MiddleName,
+            Login = user.Login,
+            Number = user.Number,
+            DateOfBirth = user.DateOfBirth,
+            AppRole = user.GetRole()
+        };
+
+        return View(model);
     }
 
     // POST: Users/Delete/5
@@ -180,10 +195,10 @@ public class UsersController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var user = await _context.Users.FindAsync(id);
+
         if (user != null)
-        {
             _context.Users.Remove(user);
-        }
+        
 
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));

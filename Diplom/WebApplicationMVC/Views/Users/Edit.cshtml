@@ -1,7 +1,7 @@
-﻿@model WebApplicationMVC.Models.Database.User
+﻿@model WebApplicationMVC.ViewModels.Users.EditUserFormModel
 
 @{
-    // Layout = null;
+    ViewData["Title"] = "Edit";
 }
 
 <!DOCTYPE html>
@@ -15,56 +15,100 @@
 </head>
 <body>
 
-    <h4>Пользователь</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Login" class="control-label"></label>
-                <input asp-for="Login" class="form-control" />
-                <span asp-validation-for="Login" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Number" class="control-label"></label>
-                <input asp-for="Number" class="form-control" />
-                <span asp-validation-for="Number" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
-            @* <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div> *@
-            <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-custom" />
-            </div>
-        </form>
-    </div>
-</div>
+    <h4>Редактировать пользователя</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Login" />
 
-<div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Login" class="control-label"></label>
+                    <input asp-for="Login" class="form-control" disabled />
+                    <span asp-validation-for="Login" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="control-label"></label>
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Password" class="form-control" id="passwordInput" />
+                        <button type="button" class="btn btn-outline-secondary" onclick="generatePassword()" title="Generate Password">
+                            <i class="bi bi-shuffle"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <small id="copyMessage" class="form-text text-success" style="display:none;">Password copied!</small>
+
+                <div class="form-group">
+                    <label asp-for="Number" class="control-label"></label>
+                    <input asp-for="Number" class="form-control" type="tel" />
+                    <span asp-validation-for="Number" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateOfBirth" class="control-label"></label>
+                    <input asp-for="DateOfBirth" class="form-control" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-custom" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
         <a asp-action="Index" class="btn btn-back">
             <i class="bi bi-arrow-left"></i>
             <span class="ms-1">Вернуться</span>
         </a>
-</div>
+    </div>
+
+    <script type="text/javascript">
+        function generatePassword(length = 12) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%^&*()";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+            document.getElementById("passwordInput").value = password;
+
+            const input = document.getElementById("passwordInput");
+            input.select();
+            input.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(input.value).then(function () {
+                const msg = document.getElementById("copyMessage");
+                msg.style.display = "block";
+                setTimeout(() => msg.style.display = "none", 2000);
+            });
+
+            input.blur();
+        }
+    </script>
 
 </body>
 </html>
