@@ -1,0 +1,38 @@
+﻿.children-list {
+    display: flex;
+    flex-direction: column; /* Элементы по вертикали */
+    align-items: flex-start; /* Контейнер будет слева */
+}
+
+.child-item {
+    display: flex;
+    flex-direction: column; /* Элементы по вертикали */
+    align-items: center; /* Выровнять элементы по центру */
+    gap: 20px; /* Увеличиваем расстояние между элементами */
+    padding: 10px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+}
+
+.child-item a {
+    text-decoration: none;
+    color: black;
+    font-size: 24px;
+}
+
+.child-item a:first-of-type {
+
+}
+
+.btn-info {
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    padding: 5px 10px;
+}

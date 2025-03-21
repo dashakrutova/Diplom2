@@ -136,7 +136,7 @@
 
 </html>
 
-@if(User.Identity?.IsAuthenticated ?? false)
+@* @if(User.Identity?.IsAuthenticated ?? false)
 {
     <p>Пользователь авторизован</p>
     <form asp-controller="Auth" asp-action="Logout" method="post"> 
@@ -166,7 +166,7 @@ else
 {
     <p>No claims</p>
 }
-
+ *@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

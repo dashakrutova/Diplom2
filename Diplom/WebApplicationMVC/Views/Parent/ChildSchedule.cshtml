@@ -1,7 +1,7 @@
 ﻿@model WebApplicationMVC.ViewModels.Parents.CalendarViewModel
 
 <head>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/childSchedule.css" asp-append-version="true" />
 </head>
 
 @{
@@ -9,13 +9,13 @@
     string monthName = System.Globalization.CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat.GetMonthName(Model.Month);
 }
 
-<h2>Календарь - @monthName @Model.Year</h2>
-
 <div class="month-navigation">
     <a href="@Url.Action("ChildSchedule", new { year = Model.Month == 1 ? Model.Year - 1 : Model.Year, month = Model.Month == 1 ? 12 : Model.Month - 1 })">« Предыдущий месяц</a>
+    <h2>@monthName @Model.Year</h2>
     <a href="@Url.Action("ChildSchedule", new { year = Model.Month == 12 ? Model.Year + 1 : Model.Year, month = Model.Month == 12 ? 1 : Model.Month + 1 })">Следующий месяц »</a>
 </div>
 
+<div class="form-calendar">
 <table class="calendar">
     <thead>
         <tr>
@@ -74,6 +74,7 @@
         </tr>
     </tbody>
 </table>
+</div>
 
 <div id="lessonDetails" class="lesson-details" style="margin-top: 20px; display:none;">
     <h3>Информация о занятии</h3>
@@ -110,82 +111,7 @@
     });
 </script>
 
-<style>
-    body{margin-top: 90px;}
 
-    .today {
-    border: 2px solid black;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: transparent; /* Убираем заливку */
-}
-
-
-    .calendar {
-        width: 60%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    .calendar th, .calendar td {
-        width: 14%;
-        text-align: center;
-        height: 40px;
-        position: relative;
-        border: 1px solid #ddd;
-        cursor: pointer;
-    }
-
-    .lesson-day {
-        background-color: #c7f7c3;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        text-align: center;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .alert-sign {
-        color: red;
-        font-weight: bold;
-        position: absolute;
-        top: 2px;
-        right: 12px;
-        font-size: 14px;
-    }
-
-    .lesson-details {
-        border: 1px solid #ddd;
-        padding: 10px;
-        background-color: #f9f9f9;
-        width: 250px;
-    }
-
-    .month-navigation {
-        display: flex;
-        justify-content: space-between;
-        margin: 10px 0;
-    }
-
-    .month-navigation a {
-        text-decoration: none;
-        background-color: #007bff;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-    }
-</style>
 
 
 @* 

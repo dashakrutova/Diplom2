@@ -93,3 +93,22 @@ tr {
 	text-align: left;
 	margin-bottom: 25px;
 }
+.main-container {
+	display: flex;
+	align-items: flex-start;
+}
+
+
+.back-button {
+	margin-right: 40px; /* Отступ между кнопкой и контентом */
+}
+
+
+.content-container {
+	flex-grow: 1;
+}
+
+.page-title, .action-bar, table {
+	margin-left: 0; /* Убираем отступы, так как кнопка теперь слева от контента */
+}
+
