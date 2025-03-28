@@ -41,12 +41,12 @@
 
     <div id="calendar"></div>
 
-    <!-- Модальное окно для создания события -->
+    <!-- Модальное окно для создания/редактирования события -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel">Новое занятие</h5>
+                    <h5 class="modal-title" id="eventModalLabel">Занятие</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
@@ -72,6 +72,7 @@
                 </div>
                 <div class="modal-footer">
                     <div id="modalError" class="alert alert-danger d-none w-100 text-center" role="alert"></div>
+                    <button type="button" class="btn btn-danger me-auto d-none" id="deleteEventBtn">Удалить</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                     <button type="button" class="btn btn-primary" id="saveEventBtn">Сохранить</button>
                 </div>
@@ -119,6 +120,17 @@
             $('#modalError').addClass('d-none').text('');
         }
 
+        function formatDateLocal(date) {
+            const pad = (n) => n.toString().padStart(2, '0');
+            const yyyy = date.getFullYear();
+            const mm = pad(date.getMonth() + 1);
+            const dd = pad(date.getDate());
+            const hh = pad(date.getHours());
+            const min = pad(date.getMinutes());
+            const ss = pad(date.getSeconds());
+            return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
 
@@ -139,13 +151,35 @@
                 select: function (info) {
                     const start = new Date(info.start);
                     const pad = (n) => n.toString().padStart(2, '0');
-
                     $('#eventStartDate').val(start.toISOString().split('T')[0]);
                     $('#eventStartTime').val(`${pad(start.getHours())}:${pad(start.getMinutes())}`);
                     $('#eventTeacherId').val('');
                     $('#eventGroupId').empty().append('<option value="">Сначала выберите преподавателя</option>');
+                    $('#saveEventBtn').removeData('event-id');
+                    $('#deleteEventBtn').addClass('d-none');
                     hideModalError();
                     $('#eventModal').modal('show');
+                },
+
+                eventClick: function (info) {
+                    const event = info.event;
+                    const start = new Date(event.start);
+                    const pad = (n) => n.toString().padStart(2, '0');
+                    const dateStr = start.toISOString().split('T')[0];
+                    const timeStr = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
+
+                    $('#eventStartDate').val(dateStr);
+                    $('#eventStartTime').val(timeStr);
+                    $('#eventTeacherId').val(event.extendedProps.teacherId).trigger('change');
+
+                    setTimeout(() => {
+                        $('#eventGroupId').val(event.extendedProps.groupId);
+                    }, 100);
+
+                    $('#eventModal').modal('show');
+                    $('#saveEventBtn').data('event-id', event.id);
+                    $('#deleteEventBtn').data('event-id', event.id).removeClass('d-none');
+                    hideModalError();
                 },
 
                 events: function (fetchInfo, successCallback, failureCallback) {
@@ -174,6 +208,7 @@
                 const teacherId = parseInt($('#eventTeacherId').val());
                 const date = $('#eventStartDate').val();
                 const startTime = $('#eventStartTime').val();
+                const existingId = $(this).data('event-id');
 
                 if (!groupId || !teacherId || !startTime) {
                     showModalError("Пожалуйста, заполните все поля.");
@@ -181,19 +216,25 @@
                 }
 
                 const start = new Date(`${date}T${startTime}`);
-                const end = new Date(start.getTime() + 45 * 60000); // +45 минут
+                const end = new Date(start.getTime() + 45 * 60000);
+
+                const payload = {
+                    id: existingId || 0,
+                    title: '',
+                    groupId: groupId,
+                    teacherId: teacherId,
+                    start: formatDateLocal(start),
+                    end: formatDateLocal(end)
+                };
+
+                const method = existingId ? 'PUT' : 'POST';
+                const url = existingId ? '/CalendarLesson/Update' : '/CalendarLesson/Create';
 
                 $.ajax({
-                    url: '/CalendarLesson/Create',
-                    type: 'POST',
+                    url: url,
+                    type: method,
                     contentType: 'application/json',
-                    data: JSON.stringify({
-                        title: '',
-                        groupId: groupId,
-                        teacherId: teacherId,
-                        start: start.toISOString(),
-                        end: end.toISOString()
-                    }),
+                    data: JSON.stringify(payload),
                     success: function () {
                         $('#eventModal').modal('hide');
                         calendar.refetchEvents();
@@ -206,6 +247,23 @@
                         showModalError(message);
                     }
                 });
+            });
+
+            $('#deleteEventBtn').on('click', function () {
+                const id = $(this).data('event-id');
+                if (confirm("Удалить занятие?")) {
+                    $.ajax({
+                        url: `/CalendarLesson/Delete/${id}`,
+                        type: 'DELETE',
+                        success: function () {
+                            $('#eventModal').modal('hide');
+                            calendar.refetchEvents();
+                        },
+                        error: function () {
+                            showModalError("Не удалось удалить занятие.");
+                        }
+                    });
+                }
             });
         });
     </script>

@@ -36,8 +36,10 @@ public class CalendarLessonController : Controller
             {
                 Id = l.Id,
                 Title = l.Group.Name + " \n " + l.Group.Teacher.LastName + " " + l.Group.Teacher.LastName[0] + ".",
-                Start = DateTime.SpecifyKind(l.Start, DateTimeKind.Utc),
-                End = DateTime.SpecifyKind(l.Start.AddHours(1), DateTimeKind.Utc),
+                Start = l.Start,
+                End = l.Start.AddHours(1),
+                //Start = DateTime.SpecifyKind(l.Start, DateTimeKind.Utc),
+                //End = DateTime.SpecifyKind(l.Start.AddHours(1), DateTimeKind.Utc),
                 GroupId = l.GroupId,
             })
             .ToListAsync();
@@ -66,8 +68,8 @@ public class CalendarLessonController : Controller
             .Lessons
             .Include(l => l.Group)
             .Where(l => l.Group.TeacherId == group.TeacherId &&
-                (l.Start <= model.Start.AddMinutes(60) && l.Start.AddMinutes(60) >= model.Start.AddMinutes(60) ||
-                l.Start <= model.Start && l.Start.AddMinutes(60) >= model.Start))
+                (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
+                l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
             .AnyAsync();
 
         if (isAnyCrossingLessons)
@@ -82,6 +84,53 @@ public class CalendarLessonController : Controller
         _context.Add(lesson);
         await _context.SaveChangesAsync();
 
+        return Ok();
+    }
+
+    [HttpPut("Update")]
+    public async Task<IActionResult> Update([FromBody] UpdateEvent model)
+    {
+        var existing = await _context
+            .Lessons
+            .Include(l => l.Group)
+            .FirstAsync(l => l.Id == model.Id);
+
+        if (existing == null) 
+            return NotFound();
+
+        var group = await _context.Groups
+              .FirstOrDefaultAsync(x => x.Id == model.GroupId);
+
+        if (group == null)
+            return NotFound("Группа не найдена");
+
+        var isAnyCrossingLessons = await _context
+                .Lessons
+                .Include(l => l.Group)
+                .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
+                    (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
+                    l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
+                .AnyAsync();
+
+        if (isAnyCrossingLessons)
+            return BadRequest("Ошибка: время занятий пересекаются");
+
+        existing.GroupId = model.GroupId;
+        existing.Start = DateTime.SpecifyKind(model.Start, DateTimeKind.Local);
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var lesson = await _context.Lessons.FindAsync(id);
+        if (lesson == null) 
+            return NotFound();
+
+        _context.Lessons.Remove(lesson);
+        await _context.SaveChangesAsync();
         return Ok();
     }
 
@@ -155,6 +204,14 @@ public class Event
 
 public class CreateEvent
 {
+    public DateTime Start { get; set; } // Дата и время начала
+    public DateTime End { get; set; } // Дата и время окончания
+    public int GroupId { get; set; }
+}
+
+public class UpdateEvent
+{
+    public int Id { get; set; }
     public DateTime Start { get; set; } // Дата и время начала
     public DateTime End { get; set; } // Дата и время окончания
     public int GroupId { get; set; }
