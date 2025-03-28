@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "Расписание";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Расписание</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ru.js"></script>
+
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        #calendar {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 class="mb-4">Расписание занятий</h2>
+
+    <div id="calendar"></div>
+
+    <!-- Модальное окно для создания события -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Новое занятие</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="mb-3">
+                            <label for="eventTeacherId" class="form-label">Преподаватель</label>
+                            <select class="form-select" id="eventTeacherId" required>
+                                <option value="">Выберите преподавателя</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventGroupId" class="form-label">Группа</label>
+                            <select class="form-select" id="eventGroupId" required>
+                                <option value="">Сначала выберите преподавателя</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventStartTime" class="form-label">Время начала</label>
+                            <input type="time" class="form-control" id="eventStartTime" step="900" required>
+                        </div>
+                        <input type="hidden" id="eventStartDate">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div id="modalError" class="alert alert-danger d-none w-100 text-center" role="alert"></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let teacherGroupsMap = {};
+
+        function loadTeachersWithGroups() {
+            $.get('/CalendarLesson/GetAll', function (data) {
+                const teacherSelect = $('#eventTeacherId');
+                teacherSelect.empty();
+                teacherSelect.append('<option value="">Выберите преподавателя</option>');
+
+                data.forEach(t => {
+                    teacherSelect.append(`<option value="${t.id}">${t.name}</option>`);
+                    teacherGroupsMap[t.id] = t.groups;
+                });
+            });
+        }
+
+        $('#eventTeacherId').on('change', function () {
+            const teacherId = $(this).val();
+            const groupSelect = $('#eventGroupId');
+            groupSelect.empty();
+
+            if (teacherId && teacherGroupsMap[teacherId]) {
+                const groups = teacherGroupsMap[teacherId];
+                groupSelect.append('<option value="">Выберите группу</option>');
+                groups.forEach(g => {
+                    groupSelect.append(`<option value="${g.id}">${g.name}</option>`);
+                });
+            } else {
+                groupSelect.append('<option value="">Сначала выберите преподавателя</option>');
+            }
+        });
+
+        function showModalError(message) {
+            $('#modalError').removeClass('d-none').text(message);
+        }
+
+        function hideModalError() {
+            $('#modalError').addClass('d-none').text('');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek'
+                },
+                initialView: 'timeGridWeek',
+                locale: 'ru',
+                slotMinTime: "08:00:00",
+                slotMaxTime: "22:00:00",
+                height: "auto",
+                displayEventTime: false,
+                selectable: true,
+
+                select: function (info) {
+                    const start = new Date(info.start);
+                    const pad = (n) => n.toString().padStart(2, '0');
+
+                    $('#eventStartDate').val(start.toISOString().split('T')[0]);
+                    $('#eventStartTime').val(`${pad(start.getHours())}:${pad(start.getMinutes())}`);
+                    $('#eventTeacherId').val('');
+                    $('#eventGroupId').empty().append('<option value="">Сначала выберите преподавателя</option>');
+                    hideModalError();
+                    $('#eventModal').modal('show');
+                },
+
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    $.ajax({
+                        url: '/CalendarLesson/GetEvents',
+                        type: 'GET',
+                        data: {
+                            start: fetchInfo.startStr,
+                            end: fetchInfo.endStr
+                        },
+                        success: function (data) {
+                            successCallback(data);
+                        },
+                        error: function () {
+                            failureCallback();
+                        }
+                    });
+                }
+            });
+
+            calendar.render();
+            loadTeachersWithGroups();
+
+            $('#saveEventBtn').on('click', function () {
+                const groupId = parseInt($('#eventGroupId').val());
+                const teacherId = parseInt($('#eventTeacherId').val());
+                const date = $('#eventStartDate').val();
+                const startTime = $('#eventStartTime').val();
+
+                if (!groupId || !teacherId || !startTime) {
+                    showModalError("Пожалуйста, заполните все поля.");
+                    return;
+                }
+
+                const start = new Date(`${date}T${startTime}`);
+                const end = new Date(start.getTime() + 45 * 60000); // +45 минут
+
+                $.ajax({
+                    url: '/CalendarLesson/Create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        title: '',
+                        groupId: groupId,
+                        teacherId: teacherId,
+                        start: start.toISOString(),
+                        end: end.toISOString()
+                    }),
+                    success: function () {
+                        $('#eventModal').modal('hide');
+                        calendar.refetchEvents();
+                    },
+                    error: function (xhr) {
+                        let message = "Ошибка при создании занятия";
+                        if (xhr.status === 400) {
+                            message = xhr.responseText || "Некорректные данные";
+                        }
+                        showModalError(message);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

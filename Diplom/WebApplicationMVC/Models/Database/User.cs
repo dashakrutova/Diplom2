@@ -14,6 +14,7 @@ public class User
 	public string Number { get; set; }
 	public DateOnly DateOfBirth { get; set; }
 	public List<Student> Student { get; set; }
+	public List<Group> Groups { get; set; }
 
     public AppRole AppRole { get; set; }
 
