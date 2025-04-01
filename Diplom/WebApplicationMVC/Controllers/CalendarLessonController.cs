@@ -38,8 +38,7 @@ public class CalendarLessonController : Controller
                 Title = l.Group.Name + " \n " + l.Group.Teacher.LastName + " " + l.Group.Teacher.LastName[0] + ".",
                 Start = l.Start,
                 End = l.Start.AddHours(1),
-                //Start = DateTime.SpecifyKind(l.Start, DateTimeKind.Utc),
-                //End = DateTime.SpecifyKind(l.Start.AddHours(1), DateTimeKind.Utc),
+                TeacherId = l.Group.TeacherId,
                 GroupId = l.GroupId,
             })
             .ToListAsync();
@@ -108,6 +107,7 @@ public class CalendarLessonController : Controller
                 .Lessons
                 .Include(l => l.Group)
                 .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
+                    l.Id != existing.Id &&
                     (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
                     l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
                 .AnyAsync();
@@ -135,21 +135,21 @@ public class CalendarLessonController : Controller
     }
 
     [HttpGet("GetAll")]
-    public async Task<IActionResult> GetAll()
+    public async Task<List<Teacher>> GetAll()
     {
         var data = await _context
             .Users
             .Where(x => x.AppRole == AppRole.Teacher)
             .Include(u => u.Groups)
-            .Select(t => new
+            .Select(t => new Teacher
             {
-                t.Id,
+                Id = t.Id,
                 Name = t.FirstName,
-                Groups = t.Groups.Select(g => new { g.Id, g.Name }).ToList()
+                Groups = t.Groups.Select(g => new Group() { Id = g.Id, Name = g.Name }).ToList()
             })
             .ToListAsync();
 
-        return Ok(data);
+        return data;
     }
 
     private string GetGroupColor(int groupId)
@@ -199,6 +199,7 @@ public class Event
     public DateTime Start { get; set; } // Дата и время начала
     public DateTime End { get; set; } // Дата и время окончания
     public int GroupId { get; set; } // ID группы для цвета
+    public int TeacherId { get; set; }
     public string Color { get; set; }
 }
 

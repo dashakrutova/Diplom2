@@ -107,6 +107,7 @@
                 groups.forEach(g => {
                     groupSelect.append(`<option value="${g.id}">${g.name}</option>`);
                 });
+                $(document).trigger('group-options-loaded');
             } else {
                 groupSelect.append('<option value="">Сначала выберите преподавателя</option>');
             }
@@ -170,11 +171,12 @@
 
                     $('#eventStartDate').val(dateStr);
                     $('#eventStartTime').val(timeStr);
+
                     $('#eventTeacherId').val(event.extendedProps.teacherId).trigger('change');
 
-                    setTimeout(() => {
-                        $('#eventGroupId').val(event.extendedProps.groupId);
-                    }, 100);
+                    // $(document).one('group-options-loaded', function () {
+                    //     $('#eventGroupId').val(event.extendedProps.teacherId);
+                    // });
 
                     $('#eventModal').modal('show');
                     $('#saveEventBtn').data('event-id', event.id);
