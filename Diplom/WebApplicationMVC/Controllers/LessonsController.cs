@@ -7,7 +7,6 @@ using WebApplicationMVC.ViewModels.Lessons;
 
 namespace WebApplicationMVC.Controllers;
 
-// Todo: нужна ли здесь авторизация?
 [Authorize("admin")]
 public class LessonsController : Controller
 {
@@ -21,11 +20,12 @@ public class LessonsController : Controller
     // GET: Lessons
     public async Task<IActionResult> Index()
     {
-        var appDbContext = _context.Lessons.Include(s => s.Group);
         var lessons = await _context
             .Lessons
             .Include(l => l.Group)
             .ThenInclude(g => g.Teacher)
+            .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .Select(l => new LessonViewModel()
             {
                 Id = l.Id,
@@ -45,11 +45,12 @@ public class LessonsController : Controller
         if (id == null)
             return NotFound();
 
-        var appDbContext = _context.Lessons.Include(s => s.Group);
         var lesson = await _context
             .Lessons
             .Include(l => l.Group)
             .ThenInclude(g => g.Teacher)
+            .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .Select(l => new LessonDetailsViewModel()
             {
                 Id = l.Id,
@@ -80,7 +81,9 @@ public class LessonsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var group = await _context.Groups
+            var group = await _context
+                .Groups
+                .Include(g => g.Students)
                 .FirstOrDefaultAsync(x => x.Id == model.GroupId);
 
             if (group == null)
@@ -165,6 +168,7 @@ public class LessonsController : Controller
 
                 var group = await _context
                     .Groups
+                    .Include(g => g.Students)
                     .FirstOrDefaultAsync(x => x.Id == model.GroupId);
 
                 if (group == null)
@@ -218,6 +222,8 @@ public class LessonsController : Controller
         var lesson = await _context.Lessons
             .Include(x => x.Group)
             .ThenInclude(g => g.Teacher)
+            .Include(x => x.Group)
+            .ThenInclude(g => g.Students)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (lesson == null)
@@ -260,6 +266,7 @@ public class LessonsController : Controller
     {
         var groups = await _context
             .Groups
+            .Include(g => g.Students)
             .Select(x => new
             {
                 Id = x.Id,

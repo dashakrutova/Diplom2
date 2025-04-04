@@ -63,6 +63,8 @@ public class StudentsController : Controller
     {
         await SetParentsForViewBagAsync();
         await SetGroupsForViewBagAsync();
+        await SetTeachersForViewBagAsync();
+        await SetCoursesForViewBagAsync();
         return View();
     }
 
@@ -75,18 +77,6 @@ public class StudentsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var group = await _context
-                .Groups
-                .FirstOrDefaultAsync(x => x.Id == model.GroupId);
-
-            if (group == null)
-            {
-                ModelState.AddModelError("GroupId", "Ошибка при выборе группы");
-                await SetParentsForViewBagAsync(model.ParentId);
-                await SetGroupsForViewBagAsync(model.GroupId);
-                return View(model);
-            }
-
             var parent = await _context
                 .Users
                 .Where(x => x.AppRole == AppRole.Parent)
@@ -97,7 +87,69 @@ public class StudentsController : Controller
                 ModelState.AddModelError("ParentId", "Ошибка при выборе родителя");
                 await SetParentsForViewBagAsync(model.ParentId);
                 await SetGroupsForViewBagAsync(model.GroupId);
+                await SetTeachersForViewBagAsync(model.TeacherId);
+                await SetCoursesForViewBagAsync(model.CourseId);
+
                 return View(model);
+            }
+
+            Group group;
+
+            if (model.IsPrivate)
+            {
+                var course = await _context
+                    .Courses.FirstOrDefaultAsync(c => c.Id == model.CourseId);
+
+                if (course == null)
+                {
+                    ModelState.AddModelError("CourseId", "Ошибка при выборе курса");
+                    await SetParentsForViewBagAsync(model.ParentId);
+                    await SetGroupsForViewBagAsync(model.GroupId);
+                    await SetTeachersForViewBagAsync(model.TeacherId);
+                    await SetCoursesForViewBagAsync(model.CourseId);
+                    return View(model);
+                }
+
+                var teacher = await _context
+                    .Users
+                    .FirstOrDefaultAsync(x => x.Id == model.TeacherId && x.AppRole == AppRole.Teacher);
+
+                if (teacher == null || teacher.AppRole != AppRole.Teacher)
+                {
+                    ModelState.AddModelError("TeacherId", "Ошибка при выборе преподователя");
+                    await SetParentsForViewBagAsync(model.ParentId);
+                    await SetGroupsForViewBagAsync(model.GroupId);
+                    await SetTeachersForViewBagAsync(model.TeacherId);
+                    await SetCoursesForViewBagAsync(model.CourseId);
+                    return View(model);
+                }
+
+                group = new Group()
+                {
+                    GroupType = GroupType.Personal,
+                    //CourseId = course.Id,
+                    Course = course,
+                    Teacher = teacher,
+                    Name = "---"
+                };
+            }
+            else
+            {
+                var groupFromDb = await _context
+                    .Groups
+                    .FirstOrDefaultAsync(x => x.Id == model.GroupId);
+
+                if (groupFromDb == null)
+                {
+                    ModelState.AddModelError("GroupId", "Ошибка при выборе группы");
+                    await SetParentsForViewBagAsync(model.ParentId);
+                    await SetGroupsForViewBagAsync(model.GroupId);
+                    await SetTeachersForViewBagAsync(model.TeacherId);
+                    await SetCoursesForViewBagAsync(model.CourseId);
+                    return View(model);
+                }
+
+                group = groupFromDb;
             }
 
             var student = new Student()
@@ -126,7 +178,11 @@ public class StudentsController : Controller
         if (id == null)
             return NotFound();
 
-        var student = await _context.Students.FindAsync(id);
+        var student = await _context
+            .Students
+            .Include(s => s.Group)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
         if (student == null)
             return NotFound();
 
@@ -141,7 +197,8 @@ public class StudentsController : Controller
             MiddleName = student.MiddleName,
             DateOfBirth = student.DateOfBirth,
             GroupId = student.GroupId,
-            ParentId = student.ParentId
+            ParentId = student.ParentId,
+            IsPrivate = student.Group.GroupType == GroupType.Personal
         };
 
         return View(studentEditViewModel);
@@ -195,8 +252,11 @@ public class StudentsController : Controller
                 student.LastName = model.LastName;
                 student.MiddleName = model.MiddleName;
                 student.DateOfBirth = model.DateOfBirth;
-                student.Group = group;
                 student.Parent = parent;
+
+                if (!model.IsPrivate)
+                    student.Group = group;
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -273,6 +333,8 @@ public class StudentsController : Controller
     {
         var groups = await _context
             .Groups
+            .Include(g => g.Students)
+            .Where(g => g.GroupType != GroupType.Personal)
             .Select(x => new { Id = x.Id, Name = x.Name })
             .ToListAsync();
 
@@ -296,5 +358,34 @@ public class StudentsController : Controller
         ViewBag.Parents = id == null
             ? new SelectList(parents, "Id", "Name")
             : new SelectList(parents, "Id", "Name", id);
+    }
+
+    private async Task SetCoursesForViewBagAsync(int? id = null)
+    {
+        var courses = await _context
+            .Courses
+            .Select(x => new
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+            .ToListAsync();
+
+        ViewBag.Courses = id == null
+            ? new SelectList(courses, "Id", "Name")
+            : new SelectList(courses, "Id", "Name", id);
+    }
+
+    private async Task SetTeachersForViewBagAsync(int? id = null)
+    {
+        var teachers = await _context
+            .Users
+            .Where(x => x.AppRole == AppRole.Teacher)
+            .Select(x => new { Id = x.Id, Name = x.FirstName })
+            .ToListAsync();
+
+        ViewBag.Teachers = id == null
+            ? new SelectList(teachers, "Id", "Name")
+            : new SelectList(teachers, "Id", "Name", id);
     }
 }

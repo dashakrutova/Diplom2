@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApplicationMVC.ViewModels.Students;
 
@@ -11,6 +10,11 @@ public class CreateStudentFormModel
 
     [DataType(DataType.Date)]
     public DateOnly DateOfBirth { get; set; }
-    public int GroupId { get; set; }
+
+    public bool IsPrivate { get; set; }
+    public int? CourseId { get; set; }
+    public int? TeacherId { get; set; }
+
+    public int? GroupId { get; set; }
     public int ParentId { get; set; }
 }

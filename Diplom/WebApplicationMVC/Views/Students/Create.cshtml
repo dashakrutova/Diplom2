@@ -41,10 +41,33 @@
                 <input asp-for="DateOfBirth" class="form-control" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="GroupId" class="control-label">Group</label>
-                <select asp-for="GroupId" class="form-control" asp-items="ViewBag.Groups"></select>
+            <div class="form-group form-check mb-3">
+                <input asp-for="IsPrivate" class="form-check-input" type="checkbox" id="isPrivateCheckbox" />
+                <label class="form-check-label" for="isPrivateCheckbox">Индивидуальное занятие</label>
             </div>
+
+            <div class="form-group" id="groupSelect">
+                <label asp-for="GroupId" class="control-label">Группа</label>
+                <select asp-for="GroupId" class="form-control" asp-items="ViewBag.Groups">
+                    <option value="">-- выберите группу --</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="courseSelect">
+                <label asp-for="CourseId" class="control-label">Курс</label>
+                <select asp-for="CourseId" class="form-control" asp-items="ViewBag.Courses">
+                    <option value="">-- выберите курс --</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="teacherSelect">
+                <label asp-for="TeacherId" class="control-label">Преподаватель</label>
+                <select asp-for="TeacherId" class="form-control" asp-items="ViewBag.Teachers">
+                    <option value="">-- выберите преподавателя --</option>
+                </select>
+            </div>
+
+
             <div class="form-group">
                 <label asp-for="ParentId" class="control-label">Parent</label>
                     <select asp-for="ParentId" class="form-control" asp-items="ViewBag.Parents"></select>
@@ -63,8 +86,36 @@
         </a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+
+        <script>
+            function toggleFields() {
+                const isPrivate = document.getElementById('isPrivateCheckbox').checked;
+                const groupSelect = document.getElementById('groupSelect');
+                const courseSelect = document.getElementById('courseSelect');
+                const teacherSelect = document.getElementById('teacherSelect');
+
+                if (isPrivate) {
+                    groupSelect.style.display = 'none';
+                    document.querySelector('[name="GroupId"]').value = "";
+                    courseSelect.style.display = 'block';
+                    teacherSelect.style.display = 'block';
+                } else {
+                    groupSelect.style.display = 'block';
+                    courseSelect.style.display = 'none';
+                    teacherSelect.style.display = 'none';
+                    document.querySelector('[name="CourseId"]').value = "";
+                    document.querySelector('[name="TeacherId"]').value = "";
+                }
+            }
+
+            document.getElementById('isPrivateCheckbox').addEventListener('change', toggleFields);
+            window.addEventListener('DOMContentLoaded', toggleFields);
+        </script>
+    }
+
 </body>
 </html>

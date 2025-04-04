@@ -33,8 +33,16 @@ public class AppDbContext : DbContext
 		modelBuilder.Entity<User>()
 			.Property(o => o.AppRole)
 			.HasConversion<int>();
+        
+		modelBuilder.Entity<Group>()
+			.Property(o => o.GroupType)
+			.HasConversion<int>();
 
-            modelBuilder
+        modelBuilder.Entity<Group>()
+			.Property<string>("_name") // tells EF to map the private field
+			.HasColumnName("Name");
+
+        modelBuilder
 			.AddFakeData();
 	}
 }
@@ -131,10 +139,23 @@ static class ModelBuilderExtensions
 
 		var groupsFaker = new Faker<Group>("ru")
 			.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)
+			.RuleFor(u => u.GroupType, f => GroupType.Regular)
 			.RuleFor(u => u.Name, (f, u) => u.Name = f.Lorem.Word())
 			.RuleFor(u => u.CourseId, (f, u) => u.CourseId = f.PickRandom(courses).Id)
 			.RuleFor(u => u.TeacherId, (f, u) => u.TeacherId = f.PickRandom(users.Where(x => x.AppRole == AppRole.Teacher)).Id);
 		var groups = groupsFaker.Generate(3);
+
+		var group = new Group()
+		{
+			Id = 150,
+			Name = "Индив",
+			CourseId = courses[0].Id,
+			GroupType = GroupType.Personal,
+			TeacherId = users.FirstOrDefault(u => u.FirstName == "Мария" && u.AppRole == AppRole.Teacher).Id
+		};
+
+        groups.Add(group);
+
 		builder.Entity<Group>().HasData(groups);
 
 		var studentsFaker = new Faker<Student>("ru")
@@ -143,11 +164,16 @@ static class ModelBuilderExtensions
 			//.RuleFor(s => s.MiddleName, (f, s) => s.MiddleName = f.Person.)
 			.RuleFor(s => s.Id, (f, s) => s.Id = f.IndexFaker + 1)
 			.RuleFor(s => s.DateOfBirth, (f, s) => s.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()))
-			.RuleFor(s => s.GroupId, (f, s) => s.GroupId = f.PickRandom(groups).Id)
+			.RuleFor(s => s.GroupId, (f, s) => s.GroupId = f.PickRandom(groups.Where(g => g.GroupType != GroupType.Personal)).Id)
 			.RuleFor(s => s.ParentId,
 				(f, s) => s.ParentId = f.PickRandom(users.Where(u => u.AppRole == AppRole.Parent)).Id);
 		var students = studentsFaker.Generate(5);
-		builder.Entity<Student>().HasData(students);
+
+		var student = students[0];
+
+		student.GroupId = group.Id;
+
+        builder.Entity<Student>().HasData(students);
 
 		var lessonsFaker = new Faker<Lesson>("ru")
 			.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)

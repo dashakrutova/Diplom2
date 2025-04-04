@@ -20,8 +20,16 @@ public class GroupsController : Controller
     // GET: Groups
     public async Task<IActionResult> Index()
     {
+        var grps = await _context
+            .Groups
+            .Include(g => g.Students)
+            .Include(g => g.Course)
+            .Include(g => g.Teacher)
+            .ToListAsync(); ;
+
         var groups = await _context
             .Groups
+            .Include(g => g.Students)
             .Include(g => g.Course)
             .Include(g => g.Teacher)
             .Select(g => new GroupViewModel()
@@ -44,6 +52,7 @@ public class GroupsController : Controller
 
         var group = await _context
             .Groups
+            .Include(g => g.Students)
             .Include(g => g.Course)
             .Include(g => g.Teacher)
             .FirstOrDefaultAsync(g => g.Id == id);
@@ -122,7 +131,11 @@ public class GroupsController : Controller
         if (id == null)
             return NotFound();
 
-        var group = await _context.Groups.FindAsync(id);
+        var group = await _context
+            .Groups
+            .Include(g => g.Students)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
         if (group == null)
             return NotFound();
 
@@ -198,6 +211,7 @@ public class GroupsController : Controller
 
         var group = await _context
             .Groups
+            .Include(g => g.Students)
             .Include(g => g.Course)
             .FirstOrDefaultAsync(g => g.Id == id);
 

@@ -31,6 +31,8 @@ public class CalendarLessonController : Controller
             .ThenInclude(g => g.Course)
             .Include(l => l.Group)
             .ThenInclude(g => g.Teacher)
+            .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .Where(l => l.Start >= start && l.Start <= end)
             .Select(l => new Event()
             {
@@ -58,7 +60,8 @@ public class CalendarLessonController : Controller
             return BadRequest("Некорректные данные");
 
         var group = await _context.Groups
-               .FirstOrDefaultAsync(x => x.Id == model.GroupId);
+            .Include(g => g.Students)
+            .FirstOrDefaultAsync(x => x.Id == model.GroupId);
 
         if (group == null)
                 return NotFound("Группа не найдена");
@@ -66,6 +69,7 @@ public class CalendarLessonController : Controller
         var isAnyCrossingLessons = await _context
             .Lessons
             .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .Where(l => l.Group.TeacherId == group.TeacherId &&
                 (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
                 l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
@@ -92,13 +96,15 @@ public class CalendarLessonController : Controller
         var existing = await _context
             .Lessons
             .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .FirstAsync(l => l.Id == model.Id);
 
         if (existing == null) 
             return NotFound();
 
         var group = await _context.Groups
-              .FirstOrDefaultAsync(x => x.Id == model.GroupId);
+            .Include(g => g.Students)
+            .FirstOrDefaultAsync(x => x.Id == model.GroupId);
 
         if (group == null)
             return NotFound("Группа не найдена");
@@ -106,6 +112,7 @@ public class CalendarLessonController : Controller
         var isAnyCrossingLessons = await _context
                 .Lessons
                 .Include(l => l.Group)
+                .ThenInclude(g => g.Students)
                 .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
                     l.Id != existing.Id &&
                     (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||

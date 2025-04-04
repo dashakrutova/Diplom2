@@ -38,6 +38,8 @@ public class TeacherController : Controller
            .Lessons
            .Include(l => l.Group)
            .ThenInclude(l => l.Teacher)
+           .Include(l => l.Group)
+           .ThenInclude(l => l.Students)
            .Include(l => l.Group.Course)
            .Where(l => l.Group.TeacherId == userId && l.Start.Date.Year == year && l.Start.Date.Month == month)
            .Select(l => new LessonViewModel()
@@ -92,6 +94,8 @@ public class TeacherController : Controller
             .Lessons
             .Include(l => l.Group)
             .ThenInclude(g => g.Course)
+            .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
             .FirstOrDefaultAsync(l => l.Id == id);
 
         if (lesson == null)
