@@ -4,6 +4,7 @@ using System.Globalization;
 using WebApplicationMVC.Auth;
 using WebApplicationMVC.Models.Database;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -18,10 +19,18 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllersWithViews();
+
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//	options.UseSqlite("Data Source=app.db");
+//});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-	options.UseSqlite("Data Source=app.db");
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
 });
+
 
 builder.Services.AddScoped<UserManager>();
 

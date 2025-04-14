@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebApplicationMVC.Models.Database;
 
 namespace WebApplicationMVC.Models.Database;
 
@@ -31,7 +32,7 @@ public class Group
 	public Course Course { get; set; }
 	public int TeacherId { get; set; }
     public User Teacher { get; set; }
-    public List<Student> Students { get; set; }
+    public List<Student> Students { get; set; } = new();
 
 
 }
