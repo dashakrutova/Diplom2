@@ -109,12 +109,13 @@ public class GroupsController : Controller
                 await SetCoursesForViewBagAsync(model.CourseId);
                 return View(model);
             }
-                
+
             var group = new Group()
             {
                 Name = model.Name,
                 Course = course,
                 Teacher = teacher,
+                GroupType = GroupType.Regular
             };
 
             _context.Add(group);
