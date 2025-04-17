@@ -41,13 +41,13 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Student>()
 			.HasOne(s => s.User)
-			.WithMany()
+			.WithMany(u => u.Students)
 			.HasForeignKey(s => s.UserId)
 			.OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Student>()
 			.HasOne(s => s.Group)
-			.WithMany()
+			.WithMany(g => g.Students)
 			.HasForeignKey(s => s.GroupId)
 			.OnDelete(DeleteBehavior.Restrict);
 
