@@ -12,15 +12,15 @@ using WebApplicationMVC.Models.Database;
 namespace WebApplicationMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250414211355_AddChanges")]
-    partial class AddChanges
+    [Migration("20250417121923_InialCreate")]
+    partial class InialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -175,6 +175,9 @@ namespace WebApplicationMVC.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("GroupId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -182,24 +185,26 @@ namespace WebApplicationMVC.Migrations
                     b.Property<string>("MiddleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ParentId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("GroupId1");
 
                     b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Students");
                 });
@@ -244,6 +249,19 @@ namespace WebApplicationMVC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AppRole = 1,
+                            DateOfBirth = new DateOnly(1, 1, 1),
+                            FirstName = "Админ",
+                            LastName = "Админов",
+                            Login = "admin@mail.ru",
+                            Number = "123",
+                            Password = "admin"
+                        });
                 });
 
             modelBuilder.Entity("WebApplicationMVC.Models.Database.Visiting", b =>
@@ -321,30 +339,34 @@ namespace WebApplicationMVC.Migrations
             modelBuilder.Entity("WebApplicationMVC.Models.Database.Student", b =>
                 {
                     b.HasOne("WebApplicationMVC.Models.Database.Group", "Group")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WebApplicationMVC.Models.Database.User", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                    b.HasOne("WebApplicationMVC.Models.Database.Group", null)
+                        .WithMany("Students")
+                        .HasForeignKey("GroupId1");
 
                     b.HasOne("WebApplicationMVC.Models.Database.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId");
 
+                    b.HasOne("WebApplicationMVC.Models.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("WebApplicationMVC.Models.Database.User", null)
-                        .WithMany("Student")
-                        .HasForeignKey("UserId");
+                        .WithMany("Students")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Group");
 
-                    b.Navigation("Parent");
-
                     b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebApplicationMVC.Models.Database.Visiting", b =>
@@ -380,7 +402,7 @@ namespace WebApplicationMVC.Migrations
                 {
                     b.Navigation("Groups");
 
-                    b.Navigation("Student");
+                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }

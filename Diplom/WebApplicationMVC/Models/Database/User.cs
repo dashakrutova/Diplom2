@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.Extensions.Hosting;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 
 namespace WebApplicationMVC.Models.Database;
@@ -13,8 +14,8 @@ public class User
 	public string Password { get; set; }
 	public string Number { get; set; }
 	public DateOnly DateOfBirth { get; set; }
-	public List<Student> Student { get; set; }
-	public List<Group> Groups { get; set; }
+	public List<Student> Students { get; set; } = new List<Student>();// ???
+    public List<Group> Groups { get; set; }
 
     public AppRole AppRole { get; set; }
 

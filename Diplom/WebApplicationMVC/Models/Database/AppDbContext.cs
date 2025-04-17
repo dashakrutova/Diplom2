@@ -1,6 +1,4 @@
-﻿using Bogus;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace WebApplicationMVC.Models.Database;
 
@@ -8,8 +6,7 @@ public class AppDbContext : DbContext
 {
 	public AppDbContext(DbContextOptions options) : base(options)
 	{
-		//Database.EnsureDeleted();
-		//Database.EnsureCreated();
+		Database.Migrate();
 	}
 
 	public DbSet<User> Users { get; set; }
@@ -42,10 +39,35 @@ public class AppDbContext : DbContext
 			.Property<string>("_name") // tells EF to map the private field
 			.HasColumnName("Name");
 
+        modelBuilder.Entity<Student>()
+			.HasOne(s => s.User)
+			.WithMany()
+			.HasForeignKey(s => s.UserId)
+			.OnDelete(DeleteBehavior.Restrict);
 
-        //     modelBuilder
-        //.AddFakeData();
-    }
+        modelBuilder.Entity<Student>()
+			.HasOne(s => s.Group)
+			.WithMany()
+			.HasForeignKey(s => s.GroupId)
+			.OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<User>().HasData(
+             new User()
+             {
+                 Id = 1,
+                 FirstName = "Админ",
+                 LastName = "Админов",
+                 Number = "123",
+                 Login = "admin@mail.ru",
+                 Password = "admin",
+                 AppRole = AppRole.Admin,
+             }
+		);
+        
+		//     modelBuilder
+		//.AddFakeData();
+	}
 }
 
 
@@ -115,7 +137,7 @@ public class AppDbContext : DbContext
 //			    Number = "000",
 //			    Login = "parent@mail.ru",
 //			    Password = "parent",
-//			    AppRole = AppRole.Parent
+//			    AppRole = AppRole.User
 //			});
 
 //			users.Add(new User()
@@ -126,7 +148,7 @@ public class AppDbContext : DbContext
 //				Number = "000",
 //				Login = "anna_parent@mail.ru",
 //				Password = "parent",
-//				AppRole = AppRole.Parent
+//				AppRole = AppRole.User
 //			});
 
 //        builder.Entity<User>().HasData(users);
@@ -159,22 +181,22 @@ public class AppDbContext : DbContext
 
 //		builder.Entity<Group>().HasData(groups);
 
-//		var studentsFaker = new Faker<Student>("ru")
+//		var studentsFaker = new Faker<Students>("ru")
 //			.RuleFor(s => s.FirstName, (f, s) => s.FirstName = f.Person.FirstName)
 //			.RuleFor(s => s.LastName, (f, s) => s.LastName = f.Person.LastName)
 //			//.RuleFor(s => s.MiddleName, (f, s) => s.MiddleName = f.Person.)
 //			.RuleFor(s => s.Id, (f, s) => s.Id = f.IndexFaker + 1)
 //			.RuleFor(s => s.DateOfBirth, (f, s) => s.DateOfBirth = DateOnly.FromDateTime(f.Date.Past()))
 //			.RuleFor(s => s.GroupId, (f, s) => s.GroupId = f.PickRandom(groups.Where(g => g.GroupType != GroupType.Personal)).Id)
-//			.RuleFor(s => s.ParentId,
-//				(f, s) => s.ParentId = f.PickRandom(users.Where(u => u.AppRole == AppRole.Parent)).Id);
+//			.RuleFor(s => s.UserId,
+//				(f, s) => s.UserId = f.PickRandom(users.Where(u => u.AppRole == AppRole.User)).Id);
 //		var students = studentsFaker.Generate(5);
 
 //		var student = students[0];
 
 //		student.GroupId = group.Id;
 
-//        builder.Entity<Student>().HasData(students);
+//        builder.Entity<Students>().HasData(students);
 
 //		var lessonsFaker = new Faker<Lesson>("ru")
 //			.RuleFor(u => u.Id, (f, u) => u.Id = f.IndexFaker + 1)

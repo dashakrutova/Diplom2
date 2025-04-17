@@ -9,8 +9,8 @@ public class Student
     public DateOnly DateOfBirth { get; set; }
 	public int GroupId { get; set; }
 	public Group Group { get; set; }
-	public int ParentId { get; set; }
-	public User Parent { get; set; }
+	public int UserId { get; set; }
+	public User User { get; set; }
 	public int? RoleId { get; set; }
 	public Role? Role { get; set; }
 }

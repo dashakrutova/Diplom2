@@ -29,7 +29,7 @@ public class ParentController : Controller
 
         var childs = await _context
             .Students
-            .Where(s => s.ParentId == userId)
+            .Where(s => s.UserId == userId)
             .Include(s => s.Group)
             .ThenInclude(g => g.Course)
             .Select(s => new ChildViewModel()
@@ -43,8 +43,8 @@ public class ParentController : Controller
         return View(childs);
     }
 
-    // GET: Parent/ChildSchedule/5
-    // https://localhost:7006/Parent/Parent%2FMyChilds?year=2024&month=2&yearChange=2024
+    // GET: User/ChildSchedule/5
+    // https://localhost:7006/User/User%2FMyChilds?year=2024&month=2&yearChange=2024
     public async Task<IActionResult> ChildSchedule(int? id, 
         [FromQuery] int? year, [FromQuery] int? month)
     {
@@ -60,7 +60,7 @@ public class ParentController : Controller
 
         var student = await _context
             .Students
-            .FirstOrDefaultAsync(s => s.Id == id && s.ParentId == userId);
+            .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
 
         if (student == null)
             return NotFound();

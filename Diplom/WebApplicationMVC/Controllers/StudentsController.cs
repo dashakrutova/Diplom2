@@ -37,7 +37,7 @@ public class StudentsController : Controller
 
         var student = await _context.Students
             .Include(s => s.Group)
-            .Include(s => s.Parent)
+            .Include(s => s.User)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (student == null)
             return NotFound();
@@ -51,8 +51,8 @@ public class StudentsController : Controller
             DateOfBirth = student.DateOfBirth,
             GroupId = student.GroupId,
             GroupName = student.Group.Name,
-            ParentName = student.Parent.FirstName +
-            " " + student.Parent.LastName + " " + student.MiddleName
+            ParentName = student.User.FirstName +
+            " " + student.User.LastName + " " + student.MiddleName
         };
 
         return View(studentView);
@@ -159,7 +159,7 @@ public class StudentsController : Controller
                 MiddleName = model.MiddleName,
                 DateOfBirth = model.DateOfBirth,
                 Group = group,
-                Parent = parent
+                User = parent
             };
 
             _context.Add(student);
@@ -187,7 +187,7 @@ public class StudentsController : Controller
             return NotFound();
 
         await SetGroupsForViewBagAsync(student.GroupId);
-        await SetParentsForViewBagAsync(student.ParentId);
+        await SetParentsForViewBagAsync(student.UserId);
 
         var studentEditViewModel = new EditStudentFormModel()
         {
@@ -197,7 +197,7 @@ public class StudentsController : Controller
             MiddleName = student.MiddleName,
             DateOfBirth = student.DateOfBirth,
             GroupId = student.GroupId,
-            ParentId = student.ParentId,
+            ParentId = (int)(student.UserId),
             IsPrivate = student.Group.GroupType == GroupType.Personal
         };
 
@@ -252,7 +252,7 @@ public class StudentsController : Controller
                 student.LastName = model.LastName;
                 student.MiddleName = model.MiddleName;
                 student.DateOfBirth = model.DateOfBirth;
-                student.Parent = parent;
+                student.User = parent;
 
                 if (!model.IsPrivate)
                     student.Group = group;
@@ -283,7 +283,7 @@ public class StudentsController : Controller
         // страничке для пользователя
         var student = await _context.Students
             .Include(s => s.Group)
-            .Include(s => s.Parent)
+            .Include(s => s.User)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (student == null)
@@ -298,8 +298,8 @@ public class StudentsController : Controller
             DateOfBirth = student.DateOfBirth,
             GroupId = student.GroupId,
             GroupName = student.Group.Name,
-            ParentName = student.Parent.FirstName +
-            " " + student.Parent.LastName + " " + student.MiddleName,
+            ParentName = student.User.FirstName +
+            " " + student.User.LastName + " " + student.MiddleName,
         };
 
         return View(viewModel);
