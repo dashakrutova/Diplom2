@@ -24,6 +24,7 @@ public class ParentController : Controller
 
     public async Task<IActionResult> MyChilds()
     {
+
         if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId))
             return BadRequest();
 
@@ -48,6 +49,7 @@ public class ParentController : Controller
     public async Task<IActionResult> ChildSchedule(int? id, 
         [FromQuery] int? year, [FromQuery] int? month)
     {
+
         if (year == null || month == null)
         {
             var now = DateTime.Now;

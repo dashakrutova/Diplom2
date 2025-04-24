@@ -27,17 +27,24 @@
     <style>
         body {
             padding: 20px;
+            padding-top: 50px;
         }
 
         #calendar {
             max-width: 1100px;
             margin: 0 auto;
         }
+       
     </style>
 </head>
 <body>
+    <div class="d-flex align-items-center mb-4">
+        <a asp-controller="Admin" asp-action="Index" class="me-3 text-decoration-none text-dark">
+            <i class="bi bi-arrow-left fs-3"></i>
+        </a>
+        <h2 class="mb-0">Расписание занятий</h2>
+    </div>
 
-    <h2 class="mb-4">Расписание занятий</h2>
 
     <div id="calendar"></div>
 

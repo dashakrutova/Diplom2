@@ -19,6 +19,11 @@ public class CoursesController : Controller
     // GET: Courses
     public async Task<IActionResult> Index()
     {
+        ViewData["Breadcrumb"] = new List<(string Text, string? Url)>
+        {
+            ("Курсы", null)
+        };
+
         var courses = await _context.Courses.ToListAsync();
 
         var courseViewModels = courses

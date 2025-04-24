@@ -16,7 +16,18 @@
 <body>
 
 <div>
-        <h4>Ученик</h4>
+        <div class="d-flex align-items-center mb-4">
+            <div class="me-3" style="margin-left: -60px;">
+                <a asp-controller="Students" asp-action="Index" class="text-decoration-none text-dark">
+                    <i class="bi bi-arrow-left fs-3"></i>
+                </a>
+            </div>
+
+            <div class="container">
+                <h4>Ученик</h4>
+            </div>
+        </div>
+        <div class="container">
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -63,13 +74,7 @@
 </div>
     <div class="button-container">
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Редактировать</a>
-        <a asp-action="Index" class="btn btn-back">
-            <i class="bi bi-arrow-left"></i>
-            <a asp-action="Index" class="btn btn-back">
-                <i class="bi bi-arrow-left"></i>
-                <span class="ms-1">Вернуться</span>
-            </a>
-        </a>
+    </div>
     </div>
 </body>
 </html>

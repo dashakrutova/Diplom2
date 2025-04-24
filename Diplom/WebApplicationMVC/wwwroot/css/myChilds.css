@@ -1,4 +1,7 @@
-﻿.children-list {
+﻿body {
+    padding-top: 50px;
+}
+.children-list {
     display: flex;
     flex-direction: column; /* Элементы по вертикали */
     align-items: flex-start; /* Контейнер будет слева */

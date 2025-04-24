@@ -13,23 +13,21 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light custom-navbar sticky-navbar mb-3">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-                <!-- Логотип слева -->
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ЛИНГВИН</a>
+        @if (ViewContext.RouteData.Values["action"]?.ToString() == "Index" &&
+        ViewContext.RouteData.Values["controller"]?.ToString() == "Home")
+        {
+            <nav class="navbar navbar-expand-lg navbar-light custom-navbar sticky-navbar mb-3">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <!-- Логотип слева -->
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ЛИНГВИН</a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                @if (ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home")
-                {
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <div class="center-menu">
                             <ul class="navbar-nav mx-auto">
-                                @* <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Курсы</a>
-                                    </li> *@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" href="#courses">Курсы</a>
                                 </li>
@@ -39,12 +37,6 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" href="#contacts">Контакты</a>
                                 </li>
-                                @* @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">ЛК админ</a>
-                                    </li>
-                                }   *@ 
                             </ul>
                         </div>
 
@@ -55,18 +47,26 @@
                             </a>
                             @if (User.Identity?.IsAuthenticated ?? false)
                             {
-                                @if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
+                                string? userName = User.Identity?.Name;
+                                string controllerName = "";
+
+                                if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Admin.ToString(), "true"))
                                 {
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">@(User.Identity?.Name)</a>
+                                    controllerName = "Admin";
                                 }
                                 else if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Parent.ToString(), "true"))
                                 {
-                                    <a class="nav-link text-dark" asp-controller="Parent" asp-action="Index">@(User.Identity?.Name)</a>
+                                    controllerName = "Parent";
                                 }
                                 else if (User.HasClaim(WebApplicationMVC.Models.Database.AppRole.Teacher.ToString(), "true"))
                                 {
-                                    <a class="nav-link text-dark" asp-controller="Teacher" asp-action="Index">@(User.Identity?.Name)</a>
+                                    controllerName = "Teacher";
                                 }
+
+                                <a class="nav-link text-dark text-center d-flex flex-column align-items-center" asp-controller="@controllerName" asp-action="Index">
+                                    <i class="bi bi-person-circle" style="font-size: 24px; margin-bottom: 0;"></i>
+                                    <span style="line-height: 1;">@userName</span>
+                                </a>
                             }
                             else
                             {
@@ -74,24 +74,26 @@
                                     <i class="bi bi-box-arrow-in-right me-1"></i>Вход
                                 </a>
                             }
-
                         </div>
                     </div>
-                }
-                else
-                {
-
-                }
-            </div>
-        </nav>
+                </div>
+            </nav>
+        }
     </header>
 
 
+
     <div class="container">
+        <p class="text-muted">
+            @WebApplicationMVC.Helpers.BreadcrumbHelper.GetBreadcrumb(
+                     ViewContext.RouteData.Values["controller"]?.ToString() ?? "",
+                     ViewContext.RouteData.Values["action"]?.ToString() ?? "")
+        </p>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
 
     @* <footer class="border-top footer text-muted">
         <div class="container">

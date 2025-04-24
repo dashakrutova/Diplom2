@@ -18,43 +18,50 @@
 </head>
 
 <body>
+    <div class="main-container">
+        <a asp-controller="Admin" asp-action="Index" class="btn back-button">
+            <i class="bi bi-arrow-left fs-3"></i>
+        </a>
 
-    <div class="page-title">
-        <h1>Пользователи</h1>
-    </div>
-    <div class="action-bar">
-        <div class="search-container">
-            <input type="text" placeholder="Поиск" id="searchInput" />
+        <div class="content-container">
+            <div class="page-title">
+                <h1>Пользователи</h1>
+            </div>
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" placeholder="Поиск" id="searchInput" />
+            </div>
+            <a asp-action="Create" class="btn btn-custom btn-add">Добавить</a>
         </div>
-        <a asp-action="Create" class="btn btn-custom btn-add">Добавить</a>
-    </div>
-    <table class="table">
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                var item = Model.ElementAt(i);
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AppRole)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom">Информация</a>
+        <table class="table">
+            <tbody>
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+                    var item = Model.ElementAt(i);
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AppRole)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom">Информация</a>
 
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom">Редактировать</a>
-                    </td>
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom">Удалить</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom">Редактировать</a>
+                        </td>
+                        <td>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom">Удалить</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+        </div>
 
     <script src="~/js/site.js"></script>
 
