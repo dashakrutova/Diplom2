@@ -66,14 +66,23 @@ public class CalendarLessonController : Controller
         if (group == null)
                 return NotFound("Группа не найдена");
 
+        //var isAnyCrossingLessons = await _context
+        //    .Lessons
+        //    .Include(l => l.Group)
+        //    .ThenInclude(g => g.Students)
+        //    .Where(l => l.Group.TeacherId == group.TeacherId &&
+        //        (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
+        //        l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
+        //    .AnyAsync();
         var isAnyCrossingLessons = await _context
             .Lessons
             .Include(l => l.Group)
             .ThenInclude(g => g.Students)
             .Where(l => l.Group.TeacherId == group.TeacherId &&
-                (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
-                l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
+                (l.Start < model.End) && (l.Start.AddHours(1) > model.Start))
             .AnyAsync();
+
+
 
         if (isAnyCrossingLessons)
             return BadRequest("Ошибка: время занятий пересекаются");
@@ -109,15 +118,25 @@ public class CalendarLessonController : Controller
         if (group == null)
             return NotFound("Группа не найдена");
 
+        //var isAnyCrossingLessons = await _context
+        //        .Lessons
+        //        .Include(l => l.Group)
+        //        .ThenInclude(g => g.Students)
+        //        .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
+        //            l.Id != existing.Id &&
+        //            (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
+        //            l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
+        //        .AnyAsync();
+
         var isAnyCrossingLessons = await _context
-                .Lessons
-                .Include(l => l.Group)
-                .ThenInclude(g => g.Students)
-                .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
-                    l.Id != existing.Id &&
-                    (l.Start < model.Start.AddMinutes(60) && l.Start.AddMinutes(60) > model.Start.AddMinutes(60) ||
-                    l.Start < model.Start && l.Start.AddMinutes(60) > model.Start))
-                .AnyAsync();
+            .Lessons
+            .Include(l => l.Group)
+            .ThenInclude(g => g.Students)
+            .Where(l => l.Group.TeacherId == existing.Group.TeacherId &&
+                l.Id != existing.Id &&
+                (l.Start < model.End) && (l.Start.AddHours(1) > model.Start))
+            .AnyAsync();
+
 
         if (isAnyCrossingLessons)
             return BadRequest("Ошибка: время занятий пересекаются");
@@ -148,6 +167,7 @@ public class CalendarLessonController : Controller
             .Users
             .Where(x => x.AppRole == AppRole.Teacher)
             .Include(u => u.Groups)
+            .ThenInclude(g => g.Students)
             .Select(t => new Teacher
             {
                 Id = t.Id,
