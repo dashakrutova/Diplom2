@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using WebApplicationMVC.Auth;
 using WebApplicationMVC.Models.Database;
+using WebApplicationMVC.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,6 +54,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("teacher",
         policy => policy.RequireClaim(AppRole.Teacher.ToString(), "true"));
 });
+
+builder.Services.AddTransient<EmailService>();
 
 var app = builder.Build();
 

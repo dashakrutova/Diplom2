@@ -18,8 +18,10 @@ public class User
     public List<Group> Groups { get; set; }
 
     public AppRole AppRole { get; set; }
+    public string? PasswordResetToken { get; set; }
+    public DateTime? PasswordResetTokenExpires { get; set; }
 
-	[NotMapped]
+    [NotMapped]
 	public List<Claim> Claims
 	{
 		get

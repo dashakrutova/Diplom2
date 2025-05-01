@@ -18,4 +18,22 @@ public class UserManager
             .Users
             .FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
     }
+
+    public async Task<User?> GetUserByEmailAsync(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.Login == email);
+    }
+
+    public async Task<User?> GetUserByResetTokenAsync(string token)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x =>
+            x.PasswordResetToken == token);
+    }
+
+    public async Task UpdateUserAsync(User user)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+ 
 }

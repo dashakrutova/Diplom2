@@ -17,7 +17,7 @@ public class CreateUserFormModel
 
     [EmailAddress(ErrorMessage = "Invalid format")]
     [Required(ErrorMessage = "Login is required.")]
-    [StringLength(20, MinimumLength = 5, ErrorMessage = "Login must be between 5 and 20 characters.")]
+    [StringLength(30, MinimumLength = 5, ErrorMessage = "Login must be between 5 and 30 characters.")]
     public string Login { get; set; }
 
     [Required(ErrorMessage = "Password is required.")]
