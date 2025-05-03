@@ -159,7 +159,8 @@ public class StudentsController : Controller
                 MiddleName = model.MiddleName,
                 DateOfBirth = model.DateOfBirth,
                 Group = group,
-                User = parent
+                User = parent,
+                Balance = model.Balance
             };
 
             _context.Add(student);
@@ -198,7 +199,8 @@ public class StudentsController : Controller
             DateOfBirth = student.DateOfBirth,
             GroupId = student.GroupId,
             ParentId = (int)(student.UserId),
-            IsPrivate = student.Group.GroupType == GroupType.Personal
+            IsPrivate = student.Group.GroupType == GroupType.Personal,
+            Balance = student.Balance
         };
 
         return View(studentEditViewModel);
@@ -253,6 +255,7 @@ public class StudentsController : Controller
                 student.MiddleName = model.MiddleName;
                 student.DateOfBirth = model.DateOfBirth;
                 student.User = parent;
+                student.Balance = model.Balance;
 
                 if (!model.IsPrivate)
                     student.Group = group;
@@ -388,4 +391,13 @@ public class StudentsController : Controller
             ? new SelectList(teachers, "Id", "Name")
             : new SelectList(teachers, "Id", "Name", id);
     }
+    public async Task<IActionResult> ListByParent(int parentId)
+    {
+        var students = await _context.Students
+            .Where(s => s.UserId == parentId)
+            .ToListAsync();
+
+        return View(students); // сделай соответствующее представление
+    }
+
 }

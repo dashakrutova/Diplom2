@@ -276,4 +276,20 @@ public class GroupsController : Controller
             ? new SelectList(teachers, "Id", "Name") 
             : new SelectList(teachers, "Id", "Name", id);
     }
+    public async Task<IActionResult> ListByTeacher(int teacherId)
+    {
+        var teacherGroups = await _context
+            .Groups
+            .Include(u => u.Students)
+            .Where(g => g.TeacherId == teacherId)  // предполагаем, что у тебя есть связь между группой и преподавателем
+            .ToListAsync();
+
+        if (teacherGroups == null || !teacherGroups.Any())
+        {
+            return NotFound();
+        }
+
+        return View(teacherGroups);  // Это отобразит представление ListByTeacher.cshtml
+    }
+
 }

@@ -17,4 +17,6 @@ public class CreateStudentFormModel
 
     public int? GroupId { get; set; }
     public int ParentId { get; set; }
+    public int Balance { get; set; }
+
 }

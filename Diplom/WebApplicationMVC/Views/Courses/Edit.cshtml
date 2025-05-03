@@ -44,6 +44,17 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label asp-for="GroupPrice" class="control-label"></label>
+                        <input asp-for="GroupPrice" class="form-control" />
+                        <span asp-validation-for="GroupPrice" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="IndividualPrice" class="control-label"></label>
+                        <input asp-for="IndividualPrice" class="form-control" />
+                        <span asp-validation-for="IndividualPrice" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                             <input type="submit" value="Сохранить" class="btn btn-save" />
                     </div>
                 </form>

@@ -78,7 +78,9 @@ public class CoursesController : Controller
             var course = new Course()
             {
                 Name = model.Name,
-                Description = model.Description
+                Description = model.Description,
+                GroupPrice = model.GroupPrice,
+                IndividualPrice = model.IndividualPrice
             };
 
             _context.Add(course);
@@ -106,7 +108,9 @@ public class CoursesController : Controller
         {
             Id = course.Id,
             Name = course.Name,
-            Description = course.Description
+            Description = course.Description,
+            GroupPrice = course.GroupPrice,
+            IndividualPrice = course.IndividualPrice
         };
         
         return View(editCourseFormModel);
@@ -131,6 +135,8 @@ public class CoursesController : Controller
 
                 course.Name = model.Name;
                 course.Description = model.Description;
+                course.GroupPrice = model.GroupPrice;
+                course.IndividualPrice = model.IndividualPrice;
 
                 await _context.SaveChangesAsync();
             }

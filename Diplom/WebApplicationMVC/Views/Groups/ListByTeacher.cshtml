@@ -1,0 +1,34 @@
+﻿@model List<WebApplicationMVC.Models.Database.Group>
+
+@{
+    ViewData["Title"] = "Группы преподавателя";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <p>У этого преподавателя пока нет групп.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Название группы</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Groups" asp-action="Details" asp-route-id="@group.Id">
+                            @group.Name
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

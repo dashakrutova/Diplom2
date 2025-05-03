@@ -94,7 +94,8 @@ public class ParentController : Controller
             Year = (int)year,
             Month = (int)month,
             Lessons = lessons,
-            AlertDates = skippedLesonsDates
+            AlertDates = skippedLesonsDates,
+            Balance = student.Balance
         };
 
         return View(model);

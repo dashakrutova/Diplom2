@@ -14,4 +14,5 @@ public class EditStudentFormModel
     public int GroupId { get; set; }
     public int ParentId { get; set; }
     public bool IsPrivate { get; set; }
+    public int Balance { get; set; }
 }

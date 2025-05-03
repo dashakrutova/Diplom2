@@ -62,10 +62,23 @@
         </dd>
     </dl>
 </div>
-    <div class="button-container">
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Редактировать</a>
-        
-    </div>
+        <div class="button-container mt-3">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Редактировать</a>
+
+            @if (Model.IsParent)
+            {
+                <a asp-controller="Students" asp-action="ListByParent" asp-route-parentId="@Model.Id" class="btn btn-secondary ms-2">
+                    Дети
+                </a>
+            }
+
+            @if (Model.IsTeacher)
+            {
+                <a asp-controller="Groups" asp-action="ListByTeacher" asp-route-teacherId="@Model.Id" class="btn btn-secondary ms-2">
+                    Группы
+                </a>
+            }
+        </div>
     </div>
 </body>
 </html>

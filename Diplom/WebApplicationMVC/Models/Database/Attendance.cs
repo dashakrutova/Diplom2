@@ -8,4 +8,5 @@ public class Attendance
     public int StudentId { get; set; }
     public Student Student { get; set; }
     public bool IsVisited { get; set; }
+    public bool IsCharged { get; set; } = false;
 }

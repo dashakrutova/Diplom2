@@ -10,4 +10,6 @@ public class UserDetailsViewModel
     public string Number { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public string AppRole { get; set; }
+    public bool IsParent => AppRole == "Родитель";
+    public bool IsTeacher => AppRole == "Преподователь";
 }

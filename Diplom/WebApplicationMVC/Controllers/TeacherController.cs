@@ -147,47 +147,68 @@ public class TeacherController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAttendances(AddAttendanceFormModel model)
     {
-        if (model.Attendances.Count == 0)
-            return Index();
+        if (!ModelState.IsValid || model.Attendances.Count == 0)
+            return RedirectToAction(nameof(MySchedule));
 
-        if (ModelState.IsValid)
+        var lesson = await _context.Lessons
+            .Include(l => l.Group)
+                .ThenInclude(g => g.Course)
+            .FirstOrDefaultAsync(l => l.Id == model.LessonId);
+        if (lesson == null) return BadRequest();
+
+        var course = lesson.Group.Course;
+        int price = lesson.Group.GroupType == GroupType.Personal
+            ? course.IndividualPrice
+            : course.GroupPrice;
+
+        // 1) Обновление существующих записей
+        var toUpdate = model.Attendances.Where(a => a.Id != 0).ToList();
+        if (toUpdate.Any())
         {
-            var attendancesForCreate = model.Attendances.Where(a => a.Id == 0).ToList();
-            var attendancesForUpdate = model.Attendances.Where(a => a.Id != 0).ToList();
+            var exist = await _context.Attendances
+                .Where(a => toUpdate.Select(vm => vm.Id).Contains(a.Id))
+                .ToListAsync();
 
-            if (attendancesForUpdate.Any())
+            foreach (var vm in toUpdate)
             {
-                var ids = attendancesForUpdate.Select(a => a.Id).ToList();
-                var attendances = await _context
-                    .Attendances
-                    .Where(a => ids.Contains(a.Id))
-                    .ToListAsync();
+                var dbA = exist.First(a => a.Id == vm.Id);
 
-                foreach (var at in attendancesForUpdate)
+                // если из false→true, и ещё не списывали — списать и пометить IsCharged
+                if (!dbA.IsVisited && vm.IsVisited && !dbA.IsCharged)
                 {
-                    var updatingAttendance = attendances.FirstOrDefault(a => a.Id == at.Id);
-                    if (updatingAttendance == null)
-                    {
-                        attendancesForCreate.Add(at);
-                        continue;
-                    }
-                    updatingAttendance.IsVisited = at.IsVisited;
+                    var student = await _context.Students.FindAsync(vm.StudentId);
+                    student.Balance -= price;
+
+                    dbA.IsCharged = true;
                 }
-            }
 
-            foreach (var at in attendancesForCreate)
-            {
-                var attendance = new Attendance()
-                {
-                    StudentId = at.StudentId,
-                    LessonId = model.LessonId,
-                    IsVisited = at.IsVisited
-                };
-                _context.Attendances.Add(attendance);
+                // просто обновляем флаг посещения
+                dbA.IsVisited = vm.IsVisited;
             }
-
-            await _context.SaveChangesAsync();
         }
+
+        // 2) Создание новых записей
+        var toCreate = model.Attendances.Where(a => a.Id == 0).ToList();
+        foreach (var vm in toCreate)
+        {
+            var attendance = new Attendance
+            {
+                StudentId = vm.StudentId,
+                LessonId = model.LessonId,
+                IsVisited = vm.IsVisited,
+                // если сразу стоит галочка — списываем и отмечаем
+                IsCharged = vm.IsVisited
+            };
+            _context.Attendances.Add(attendance);
+
+            if (vm.IsVisited)
+            {
+                var student = await _context.Students.FindAsync(vm.StudentId);
+                student.Balance -= price;
+            }
+        }
+
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(MySchedule));
     }
 }
