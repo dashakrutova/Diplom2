@@ -35,13 +35,37 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<UserManager>();
 
+//builder.Services.AddAuthentication()
+//	.AddCookie(AuthSettings.AuthCookieName, options =>
+//	{
+//		options.LoginPath = "/auth/login";
+//		options.AccessDeniedPath = "/auth/forbidden";
+//		options.Cookie.Name = AuthSettings.AuthCookieName;
+// 	});
 builder.Services.AddAuthentication()
-	.AddCookie(AuthSettings.AuthCookieName, options =>
-	{
-		options.LoginPath = "/auth/login";
-		options.AccessDeniedPath = "/auth/forbidden";
-		options.Cookie.Name = AuthSettings.AuthCookieName;
- 	});
+    .AddCookie(AuthSettings.AuthCookieName, options =>
+    {
+        options.LoginPath = "/auth/login";  // Редирект на страницу входа
+        options.AccessDeniedPath = "/auth/forbidden";  // Редирект при отказе в доступе
+        options.Cookie.Name = AuthSettings.AuthCookieName;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = 401;//если пвтаться получить доступ к защищенной странице без авторизации(добавила для тестировнаия)
+            return Task.CompletedTask;
+        };
+
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = 403;
+            return Task.CompletedTask;
+        };
+
+        options.Events.OnSigningIn = context =>
+        {
+            Console.WriteLine("Кука подписывается: " + context.Principal.Identity.Name);
+            return Task.CompletedTask;
+        };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -89,6 +113,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

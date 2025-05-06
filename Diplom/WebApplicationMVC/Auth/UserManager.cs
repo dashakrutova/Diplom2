@@ -11,13 +11,22 @@ public class UserManager
     {
         _context = context;
     }
-
-    public async Task<User?> LoginAsync(string login, string password)
+    public async Task<User?> GetUserByLoginAsync(string login)
     {
-        return await _context
-            .Users
-            .FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
+        return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
     }
+
+    public bool VerifyPassword(User user, string password)
+    {
+        return user.Password == password;
+    }
+
+    //public async Task<User?> LoginAsync(string login, string password)
+    //{
+    //    return await _context
+    //        .Users
+    //        .FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
+    //}
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {

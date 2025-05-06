@@ -112,10 +112,6 @@
                     <div class="password-container">
                         <input type="password" asp-for="Password" id="password-input" />
                         <span asp-validation-for="Password" class="text-danger"></span>
-
-                        <button type="button" id="toggle-password" class="password-toggle">
-                            <i class="bi bi-eye" id="password-icon"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -127,15 +123,6 @@
             </form>
         </div>
     </div>
-    <script>
-        document.getElementById('toggle-password').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password-input');
-            const passwordIcon = document.getElementById('password-icon');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            passwordIcon.className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash'; // Меняем иконку
-        });
-    </script>
 </body>
 
 </html>

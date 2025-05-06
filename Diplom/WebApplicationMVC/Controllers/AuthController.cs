@@ -28,32 +28,74 @@ public class AuthController : Controller
         return View();
     }
 
+    //[HttpPost]
+    //public async Task<IActionResult> Login(LoginFormModel model)
+    //{
+    //    User? user = await _userManager.LoginAsync(model.Login, model.Password);
+    //    if (user == null)
+    //    {
+    //        ModelState.AddModelError("", "Неправильный email или пароль");
+    //        return View(model);
+    //    }
+
+    //     var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
+
+    //     var principal = new ClaimsPrincipal(identity);
+
+    //     await HttpContext.SignInAsync(AuthSettings.AuthCookieName,
+    //         principal,
+    //         new AuthenticationProperties
+    //         {
+    //             IsPersistent = false,
+    //         });
+
+    //     if (user.AppRole == AppRole.Admin)
+    //         return RedirectToAction("Index", "Admin");
+
+    //     return RedirectToAction("Index", "Home");
+    //}
+
     [HttpPost]
     public async Task<IActionResult> Login(LoginFormModel model)
     {
-        User? user = await _userManager.LoginAsync(model.Login, model.Password);
-        if (user == null)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Неправильный email или пароль");
             return View(model);
         }
 
-         var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
+        User? user = await _userManager.GetUserByLoginAsync(model.Login);
+        if (user == null)
+        {
+            Console.WriteLine("❌ Пользователь не найден");
+            ModelState.AddModelError(nameof(model.Login), "Пользователь с таким логином не найден");
+            return View(model);
+        }
 
-         var principal = new ClaimsPrincipal(identity);
+        if (!_userManager.VerifyPassword(user, model.Password))
+        {
+            Console.WriteLine("❌ Неверный пароль");
+            ModelState.AddModelError(nameof(model.Password), "Неправильный пароль");
+            return View(model);
+        }
 
-         await HttpContext.SignInAsync(AuthSettings.AuthCookieName,
-             principal,
-             new AuthenticationProperties
-             {
-                 IsPersistent = false,
-             });
+        Console.WriteLine("✅ Успешный вход — вызываем SignInAsync");
 
-         if (user.AppRole == AppRole.Admin)
-             return RedirectToAction("Index", "Admin");
+        // создаем куки
+        var identity = new ClaimsIdentity(user.Claims, AuthSettings.AuthCookieName);
+        var principal = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(AuthSettings.AuthCookieName, principal, new AuthenticationProperties
+        {
+            IsPersistent = false,
+        });
 
-         return RedirectToAction("Index", "Home");
+
+        if (user.AppRole == AppRole.Admin)
+            return RedirectToAction("Index", "Admin");
+
+        return RedirectToAction("Index", "Home");
     }
+
+
 
     [HttpPost]
     public async Task<IActionResult> Logout()
