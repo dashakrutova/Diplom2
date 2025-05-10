@@ -171,7 +171,7 @@ public class CalendarLessonController : Controller
             .Select(t => new Teacher
             {
                 Id = t.Id,
-                Name = t.FirstName,
+                Name = $"{t.LastName} {t.FirstName}{(string.IsNullOrEmpty(t.MiddleName) ? "" : " " + t.MiddleName)}",
                 Groups = t.Groups.Select(g => new Group() { Id = g.Id, Name = g.Name }).ToList()
             })
             .ToListAsync();

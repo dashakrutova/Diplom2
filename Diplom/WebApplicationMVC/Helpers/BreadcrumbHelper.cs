@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace WebApplicationMVC.Helpers
 {
@@ -60,6 +61,7 @@ namespace WebApplicationMVC.Helpers
                 "Students" => "Ученики",
                 "CalendarLesson" => "Расписание",
                 "Users" => "Пользователи",
+                "Auth" => "Авторизация",
 
                 // НЕ отображаем названия самих личных кабинетов
                 "Admin" or "Parent" or "Teacher" => string.Empty,
@@ -80,6 +82,10 @@ namespace WebApplicationMVC.Helpers
                 "ChildSchedule" => "Расписание",
                 "MyChilds" => "Дети",
                 "AddAttendances" => "Посещаемость",
+                "ForgotPassword"=> "Сброс пароля",
+                "ForgotPasswordConfirmation" => "Сброс пароля",
+                "ResetPassword" => "Сброс пароля",
+
                 _ => action
             };
         }

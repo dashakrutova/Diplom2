@@ -37,7 +37,8 @@ public class GroupsController : Controller
                 Id = g.Id,
                 Name = g.Name,
                 CourseName = g.Course.Name,
-                TeacherName = g.Teacher.FirstName,
+                TeacherName = g.Teacher.LastName + " " + g.Teacher.FirstName + (g.Teacher.MiddleName != null ? " " + g.Teacher.MiddleName : "")
+
             })
             .ToListAsync();
 
@@ -65,7 +66,8 @@ public class GroupsController : Controller
             Id = group.Id,
             Name = group.Name,
             CourseName = group.Course.Name,
-            TeacherName = group.Teacher.FirstName,
+            TeacherName = group.Teacher.LastName + " " + group.Teacher.FirstName + (group.Teacher.MiddleName != null ? " " + group.Teacher.MiddleName : "")
+
         };
 
         return View(gropViewModel);
@@ -223,7 +225,7 @@ public class GroupsController : Controller
         {
             Id = group.Id,
             Name = group.Name,
-            CourseName = group.Course.Name
+            CourseName = group.Course.Name,
         };
 
         return View(deleteGroupModel);
@@ -269,7 +271,7 @@ public class GroupsController : Controller
         var teachers = await _context
             .Users
             .Where(x => x.AppRole == AppRole.Teacher)
-            .Select(x => new { Id = x.Id, Name = x.FirstName })
+            .Select(x => new { Id = x.Id, Name = $"{x.LastName} {x.FirstName}{(x.MiddleName != null ? " " + x.MiddleName : "")}" })
             .ToListAsync();
 
         ViewBag.Teachers = id == null 

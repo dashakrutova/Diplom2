@@ -30,33 +30,44 @@
     <div class="container">
         <hr />
         <dl class="row">
-            <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.FirstName)
+            <dt class="col-sm-2">
+                Фамилия
             </dt>
-            <dd class = "col-sm-10">
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class="col-sm-2">
+                Имя
+            </dt>
+            <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.FirstName)
             </dd>
+            <dt class="col-sm-2">
+                Отчеcтво
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.MiddleName)
+            </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Login)
+                E-mail
             </dt>
             <dd class = "col-sm-10">
                 @Html.DisplayFor(model => model.Login)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Number)
+                Номер телефона
             </dt>
             <dd class = "col-sm-10">
                 @Html.DisplayFor(model => model.Number)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.DateOfBirth)
+                Дата рождения
             </dt>
             <dd class = "col-sm-10">
                 @Html.DisplayFor(model => model.DateOfBirth)
             </dd>
-
             <dt class="col-sm-2">
-                Тип пользователя
+                Роль
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.AppRole)
@@ -65,7 +76,7 @@
     
         <form asp-action="Delete">
             <input type="hidden" asp-for="Id" />
-            <input type="submit" value="Delete" class="btn btn-danger" />
+            <input type="submit" value="Удалить" class="btn btn-danger" />
         </form>
 </div>
 </body>

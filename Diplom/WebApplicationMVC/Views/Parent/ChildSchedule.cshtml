@@ -6,7 +6,8 @@
 
 @{
     var today = DateTime.Today;
-    string monthName = System.Globalization.CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat.GetMonthName(Model.Month);
+    string monthNameRaw = System.Globalization.CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat.GetMonthName(Model.Month);
+    string monthName = char.ToUpper(monthNameRaw[0]) + monthNameRaw.Substring(1);
 }
 
 <div class="month-navigation">
@@ -15,78 +16,84 @@
     <a href="@Url.Action("ChildSchedule", new { year = Model.Month == 12 ? Model.Year + 1 : Model.Year, month = Model.Month == 12 ? 1 : Model.Month + 1 })">Следующий месяц »</a>
 </div>
 
-<div class="form-calendar">
-<table class="calendar">
-    <thead>
-        <tr>
-            <th>Пн</th>
-            <th>Вт</th>
-            <th>Ср</th>
-            <th>Чт</th>
-            <th>Пт</th>
-            <th>Сб</th>
-            <th>Вс</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            var firstDay = new DateTime(Model.Year, Model.Month, 1);
-            var daysInMonth = DateTime.DaysInMonth(Model.Year, Model.Month);
-            var startDayOfWeek = (int)firstDay.DayOfWeek;
-            if (startDayOfWeek == 0) startDayOfWeek = 7;
-        }
-        <tr>
-            @for (int i = 1; i < startDayOfWeek; i++)
-            {
-                <td></td>
+
+<div class="calendar-content">
+    <div class="form-calendar">
+    <table class="calendar">
+        <thead>
+            <tr>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var firstDay = new DateTime(Model.Year, Model.Month, 1);
+                var daysInMonth = DateTime.DaysInMonth(Model.Year, Model.Month);
+                var startDayOfWeek = (int)firstDay.DayOfWeek;
+                if (startDayOfWeek == 0) startDayOfWeek = 7;
             }
-            @for (int day = 1; day <= daysInMonth; day++)
-            {
-                var date = new DateTime(Model.Year, Model.Month, day);
-                var lesson = Model.Lessons.FirstOrDefault(l => l.Date.Date == date);
-                var isLessonDay = lesson != null;
-                var isAlertDay = Model.AlertDates.Contains(date);
-
-                <td class="calendar-day" data-date="@date.ToString("yyyy-MM-dd")">
-                    @if (isLessonDay)
-                    {
-                        <div class="lesson-day">@day</div>
-                    }
-                    else
-                    {
-                        @day
-                    }
-                    @if (date == today)
-                    {
-                        <div class="today"></div>
-                    }
-                    @if (isAlertDay)
-                    {
-                        <div class="alert-sign">!</div>
-                    }
-                </td>
-
-                if ((startDayOfWeek + day - 1) % 7 == 0)
+            <tr>
+                @for (int i = 1; i < startDayOfWeek; i++)
                 {
-                    @:</tr><tr>
+                    <td></td>
                 }
-            }
-        </tr>
-    </tbody>
-</table>
+                @for (int day = 1; day <= daysInMonth; day++)
+                {
+                    var date = new DateTime(Model.Year, Model.Month, day);
+                    var lesson = Model.Lessons.FirstOrDefault(l => l.Date.Date == date);
+                    var isLessonDay = lesson != null;
+                    var isAlertDay = Model.AlertDates.Contains(date);
+
+                    <td class="calendar-day" data-date="@date.ToString("yyyy-MM-dd")">
+                        @if (isLessonDay)
+                        {
+                            <div class="lesson-day">@day</div>
+                        }
+                        else
+                        {
+                            @day
+                        }
+                        @if (date == today)
+                        {
+                            <div class="today"></div>
+                        }
+                        @if (isAlertDay)
+                        {
+                            <div class="alert-sign">!</div>
+                        }
+                    </td>
+
+                    if ((startDayOfWeek + day - 1) % 7 == 0)
+                    {
+                        @:</tr><tr>
+                    }
+                }
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div id="lessonDetails" class="lesson-details" style="margin-top: 20px; display:none;">
+        <h3>Информация о занятии</h3>
+        <p><strong>Дата:</strong> <span id="lessonDate"></span></p>
+        <p><strong>Время:</strong> <span id="lessonTime"></span></p>
+        <p><strong>Предмет:</strong> <span id="lessonCourseName"></span></p>
+        <p><strong>Преподаватель:</strong> <span id="lessonTeacher"></span></p>
+    </div>
 </div>
 
-<div class="parent-balance" style="margin:10px 0; font-weight:bold;">
+<div class="child-info" style="margin-bottom: 10px; font-size:20px; margin-top: 10px;">
+    <p>@Model.ChildFullName</p>
+    <p>Курс: @Model.CourseName</p>
+</div>
+<div class="parent-balance" style="margin:10px 0; font-weight:bold; font-size:25px;">
     Баланс ребёнка: @Model.Balance.ToString("N2") ₽
-</div>
-
-<div id="lessonDetails" class="lesson-details" style="margin-top: 20px; display:none;">
-    <h3>Информация о занятии</h3>
-    <p><strong>Дата:</strong> <span id="lessonDate"></span></p>
-    <p><strong>Время:</strong> <span id="lessonTime"></span></p>
-    <p><strong>Предмет:</strong> <span id="lessonCourseName"></span></p>
-    <p><strong>Преподаватель:</strong> <span id="lessonTeacher"></span></p>
-    <p><strong>Заметки:</strong> <span id="lessonNotes"></span></p>
 </div>
 
 <script>

@@ -3,7 +3,7 @@
 }
 .children-list {
     display: flex;
-    flex-direction: column; /* Элементы по вертикали */
+    flex-direction: row; /* Элементы по вертикали */
     align-items: flex-start; /* Контейнер будет слева */
 }
 
@@ -30,12 +30,3 @@
 
 }
 
-.btn-info {
-    border: 1px solid black;
-    border-radius: 5px;
-    background-color: white;
-    cursor: pointer;
-    text-decoration: none;
-    color: black;
-    padding: 5px 10px;
-}

@@ -67,7 +67,7 @@ public class AuthController : Controller
         if (user == null)
         {
             Console.WriteLine("❌ Пользователь не найден");
-            ModelState.AddModelError(nameof(model.Login), "Пользователь с таким логином не найден");
+            ModelState.AddModelError(nameof(model.Login), "Пользователь не найден");
             return View(model);
         }
 
@@ -88,9 +88,13 @@ public class AuthController : Controller
             IsPersistent = false,
         });
 
-
         if (user.AppRole == AppRole.Admin)
             return RedirectToAction("Index", "Admin");
+        else if (user.AppRole == AppRole.Teacher)
+            return RedirectToAction("Index", "Teacher");
+
+        else if (user.AppRole == AppRole.Parent)
+            return RedirectToAction("Index", "Parent");
 
         return RedirectToAction("Index", "Home");
     }
@@ -150,6 +154,17 @@ public class AuthController : Controller
     [HttpPost]
     public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(model); // возвращаем форму с заполненными полями
+        }
+
+        if (model.NewPassword != model.ConfirmPassword)
+        {
+            ModelState.AddModelError("ConfirmPassword", "Пароли не совпадают");
+            return View(model);
+        }
+
         var user = await _userManager.GetUserByResetTokenAsync(model.Token);
 
         if (user == null || user.PasswordResetTokenExpires < DateTime.UtcNow)

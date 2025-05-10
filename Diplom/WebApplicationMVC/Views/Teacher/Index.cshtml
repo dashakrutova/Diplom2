@@ -65,7 +65,7 @@
 </head>
 <body>
     <div class="wrapper">
-        <img src="~/images/icon.png" alt="Аватар" class="avatar">
+        <img src="@ViewBag.Avatar" alt="Аватар" class="avatar">
 
         @if (User.Identity?.IsAuthenticated ?? false)
         {
@@ -76,16 +76,10 @@
                 ЛК преподователя
             </p>
             <a asp-action="MySchedule" class="nav">Мое расписание</a>
-@*             <a asp-controller="Groups" asp-action="Index" class="nav">Группы</a>
-            <a asp-controller="Lessons" asp-action="Index" class="nav">Занятия</a>
-            <a asp-controller="Students" asp-action="Index" class="nav">Студенты</a> *@
 
             <form asp-controller="Auth" asp-action="Logout" method="post">
                 <button type="submit" class="exit-button">Выйти</button>
             </form>
-            @* <a class="btn btn-logout" asp-controller="Auth" asp-action="Logout" method="post">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Выйти
-                            </a> *@
         }
     </div>
 

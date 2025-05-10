@@ -30,20 +30,18 @@
         <div class="container">
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            Имя
-        </dt>
-        <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
         <dt class="col-sm-2">
             Фамилия
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastName)
         </dd>
-
+        <dt class = "col-sm-2">
+            Имя
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+        </dd>
         <dt class="col-sm-2">
             Отчеcтво
         </dt>
@@ -52,7 +50,7 @@
         </dd>
 
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateOfBirth)
+            Дата рождения
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateOfBirth)

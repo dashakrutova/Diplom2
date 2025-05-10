@@ -15,4 +15,6 @@ public class CalendarViewModel
     public List<LessonViewModel> Lessons { get; set; } = new List<LessonViewModel>();
     public List<DateTime> AlertDates { get; set; } = new List<DateTime>();
     public decimal Balance { get; set; }
+    public string ChildFullName { get; set; }
+    public string CourseName { get; set; }
 }

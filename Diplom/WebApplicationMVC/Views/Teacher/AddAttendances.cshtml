@@ -4,26 +4,20 @@
     ViewData["Title"] = "Редактирование посещаемости";
 }
 
-<h2>Редактирование посещаемости</h2>
+<div class="d-flex align-items-center mb-4">
+    <div class="me-3" style="margin-left: -60px;">
+        <a asp-controller="Teacher" asp-action="MySchedule" class="text-decoration-none text-dark">
+            <i class="bi bi-arrow-left fs-3"></i>
+        </a>
+    </div>
+    <h2>Редактирование посещаемости</h2>
+</div>
+<div>
+    <p><strong>Дата:</strong> @Model.Date.ToString("yyyy-MM-dd HH:mm")</p>
+    <p><strong>Курс:</strong> @Model.CourseName</p>
+    <p><strong>Группа:</strong> @Model.GroupName</p>
+</div>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Lesson ID</th>
-        <td>@Model.LessonId</td>
-    </tr>
-    <tr>
-        <th>Date</th>
-        <td>@Model.Date.ToString("yyyy-MM-dd HH:mm")</td>
-    </tr>
-    <tr>
-        <th>Course Name</th>
-        <td>@Model.CourseName</td>
-    </tr>
-    <tr>
-        <th>Group Name</th>
-        <td>@Model.GroupName</td>
-    </tr>
-</table>
 
 <form asp-action="AddAttendances" method="post">
     <table class="table">
@@ -57,3 +51,8 @@
     </table>
     <button type="submit" class="btn btn-primary">Сохранить</button>
 </form>
+<style>
+    body{
+        margin-top: 50px;
+    }
+</style>

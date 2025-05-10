@@ -19,6 +19,13 @@ public class ParentController : Controller
 
     public IActionResult Index()
     {
+        var avatarDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "avatars");
+        var allAvatars = Directory.GetFiles(avatarDir).Select(Path.GetFileName).ToList();
+        var rng = new Random();
+        ViewBag.Avatar = allAvatars.Any()
+            ? "/images/avatars/" + allAvatars[rng.Next(allAvatars.Count)]
+            : "/images/icon.png";
+
         return View();
     }
 
@@ -41,6 +48,15 @@ public class ParentController : Controller
             })
             .ToListAsync();
 
+        var avatarDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "avatars");
+        var allAvatars = Directory.GetFiles(avatarDir).Select(Path.GetFileName).ToList();
+        var rng = new Random();
+
+        foreach (var child in childs)
+        {
+            child.AvatarFileName = allAvatars[rng.Next(allAvatars.Count)];
+        }
+
         return View(childs);
     }
 
@@ -60,8 +76,14 @@ public class ParentController : Controller
         if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId))
             return BadRequest();
 
+        //var student = await _context
+        //    .Students
+        //    .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
+
         var student = await _context
             .Students
+            .Include(s => s.Group)
+            .ThenInclude(g => g.Course)
             .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
 
         if (student == null)
@@ -76,7 +98,8 @@ public class ParentController : Controller
             .Select(l => new LessonViewModel()
             {
                 Date = l.Start,
-                Teacher = l.Group.Teacher.LastName,
+                Teacher = l.Group.Teacher.LastName + " " + l.Group.Teacher.FirstName +
+                          (l.Group.Teacher.MiddleName != null ? " " + l.Group.Teacher.MiddleName : ""),
                 CourseName = l.Group.Course.Name,
                 Notes = string.Empty
             })
@@ -95,7 +118,9 @@ public class ParentController : Controller
             Month = (int)month,
             Lessons = lessons,
             AlertDates = skippedLesonsDates,
-            Balance = student.Balance
+            Balance = student.Balance,
+            ChildFullName = $"{student.LastName} {student.FirstName} {student.MiddleName}",
+            CourseName = student.Group.Course.Name
         };
 
         return View(model);

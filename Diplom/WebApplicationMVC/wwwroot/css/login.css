@@ -1,0 +1,86 @@
+﻿body {
+    margin: 0;
+    background-color: #f9fafb;
+}
+
+    /* Центрирование только контейнера */
+    .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 150px;
+    }
+
+.login-class {
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Для вертикального выравнивания */
+    justify-content: center;
+}
+
+    .login-class h2 {
+        margin-bottom: 30px; /* Увеличиваем отступ под надписью Авторизация */
+        font-size: 30px; /* Размер шрифта для заголовка */
+        color: #333; /* Цвет заголовка */
+    }
+
+    .login-class label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        text-align: left; /* Выровняли текст лейбла по левому краю */
+        width: 80%; /* Делаем ширину равной input */
+        max-width: 300px; /* Ограничение ширины */
+        margin: 0 auto; /* Центрируем по горизонтали */
+    }
+
+    .login-class input {
+        width: 80%; /* Задаем одинаковую ширину */
+        max-width: 300px; /* Ограничение ширины */
+        padding: 10px;
+        margin: 5px auto 15px; /* Центрируем инпут внутри контейнера и добавляем отступы */
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .btn-log {
+        width: 80%; /* Совпадает с input */
+        max-width: 300px; /* Ограничение ширины */
+        background-color: #1A96F6;
+        color: white;
+        border: none;
+        border-radius: 15px; /* Закругление аналогично input */
+        font-size: 18px;
+        padding: 10px;
+        transition: background-color 0.3s;
+        margin: 27px auto 0; /* Отступ сверху и выравнивание */
+        cursor: pointer;
+    }
+
+    .btn-log:hover {
+        background-color: #0377D1;
+    }
+
+    .password-container {
+        position: relative;
+    }
+
+    .password-container input {
+        padding-right: 2.5rem; /* Отступ для размещения кнопки внутри */
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }

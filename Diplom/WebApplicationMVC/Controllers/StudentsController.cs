@@ -22,7 +22,7 @@ public class StudentsController : Controller
             .Students.Select(s => new StudentViewModel()
             {
                 Id = s.Id,
-                StudentName = s.FirstName + " " + s.LastName
+                StudentName = $"{s.LastName} {s.FirstName}{(string.IsNullOrEmpty(s.MiddleName) ? "" : " " + s.MiddleName)}"
             })
             .ToListAsync();
 
@@ -90,6 +90,24 @@ public class StudentsController : Controller
                 await SetTeachersForViewBagAsync(model.TeacherId);
                 await SetCoursesForViewBagAsync(model.CourseId);
 
+                return View(model);
+            }
+
+            var isDuplicate = await _context.Students.AnyAsync(s =>
+                s.FirstName.ToLower() == model.FirstName.ToLower() &&
+                s.LastName.ToLower() == model.LastName.ToLower() &&
+                s.MiddleName.ToLower() == model.MiddleName.ToLower() &&
+                s.DateOfBirth == model.DateOfBirth &&
+                s.UserId == model.ParentId
+                );
+
+            if (isDuplicate)
+            {
+                ModelState.AddModelError(string.Empty, "Такой ученик уже существует.");
+                await SetParentsForViewBagAsync(model.ParentId);
+                await SetGroupsForViewBagAsync(model.GroupId);
+                await SetTeachersForViewBagAsync(model.TeacherId);
+                await SetCoursesForViewBagAsync(model.CourseId);
                 return View(model);
             }
 
@@ -384,7 +402,7 @@ public class StudentsController : Controller
         var teachers = await _context
             .Users
             .Where(x => x.AppRole == AppRole.Teacher)
-            .Select(x => new { Id = x.Id, Name = x.FirstName })
+            .Select(x => new { Id = x.Id, Name = $"{x.LastName} {x.FirstName}{(x.MiddleName != null ? " " + x.MiddleName : "")}" })
             .ToListAsync();
 
         ViewBag.Teachers = id == null

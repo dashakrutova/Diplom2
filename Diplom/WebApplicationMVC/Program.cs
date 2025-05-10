@@ -48,17 +48,18 @@ builder.Services.AddAuthentication()
         options.LoginPath = "/auth/login";  // Редирект на страницу входа
         options.AccessDeniedPath = "/auth/forbidden";  // Редирект при отказе в доступе
         options.Cookie.Name = AuthSettings.AuthCookieName;
-        options.Events.OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = 401;//если пвтаться получить доступ к защищенной странице без авторизации(добавила для тестировнаия)
-            return Task.CompletedTask;
-        };
 
-        options.Events.OnRedirectToAccessDenied = context =>
-        {
-            context.Response.StatusCode = 403;
-            return Task.CompletedTask;
-        };
+        //options.Events.OnRedirectToLogin = context =>
+        //{
+        //    context.Response.StatusCode = 401;//если пвтаться получить доступ к защищенной странице без авторизации(добавила для тестировнаия)
+        //    return Task.CompletedTask;
+        //};
+
+        //options.Events.OnRedirectToAccessDenied = context =>
+        //{
+        //    context.Response.StatusCode = 403;
+        //    return Task.CompletedTask;
+        //};
 
         options.Events.OnSigningIn = context =>
         {

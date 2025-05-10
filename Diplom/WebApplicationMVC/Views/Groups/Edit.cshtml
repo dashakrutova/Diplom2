@@ -34,22 +34,22 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
+                        <label asp-for="Name" class="control-label">Название</label>
                         <input asp-for="Name" class="form-control" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="CourseId" class="control-label"></label>
+                        <label asp-for="CourseId" class="control-label">Курс</label>
                         <select asp-for="CourseId" class="form-control" asp-items="ViewBag.Courses"></select>
                         <span asp-validation-for="CourseId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="TeacherId" class="control-label"></label>
+                        <label asp-for="TeacherId" class="control-label">Преподаватель</label>
                         <select asp-for="TeacherId" class="form-control" asp-items="ViewBag.Teachers"></select>
                         <span asp-validation-for="TeacherId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                            <input type="submit" value="Save" class="btn btn-save" />
+                            <input type="submit" value="Сохранить" class="btn btn-save" />
                     </div>
                 </form>
             </div>

@@ -13,7 +13,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: transparent; /* Убираем заливку */
+    background-color: transparent;  Убираем заливку 
 }
 
 
@@ -56,7 +56,6 @@
     padding: 10px;
     background-color: #FFEAEA;
     border-radius: 10px;
-    width: 400px;
 }
 
 .month-navigation {
@@ -78,6 +77,7 @@
     align-items: flex-start;
     gap: 30px;
 }
+
 .form-calendar {
     width: 400px;
     height: 400px;
@@ -87,4 +87,3 @@
     display: flex;
     margin-top: 15px;
 }
-
