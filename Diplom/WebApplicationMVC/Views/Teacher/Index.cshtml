@@ -44,8 +44,8 @@
         }
 
         .name {
-            font-weight: bold;
             margin-top: 10px;
+            text-align: center;
         }
 
         .exit-button {
@@ -70,11 +70,10 @@
         @if (User.Identity?.IsAuthenticated ?? false)
         {
             <div class="name">
-                <p>@(User.Identity?.Name)</p>
+                <p><strong>@ViewBag.FullName</strong></p>
+                <p>Телефон: @ViewBag.Phone</p>
+                <p>Почта: @ViewBag.Email</p>
             </div>
-            <p>
-                ЛК преподователя
-            </p>
             <a asp-action="MySchedule" class="nav">Мое расписание</a>
 
             <form asp-controller="Auth" asp-action="Logout" method="post">

@@ -27,8 +27,8 @@
         @foreach (var item in Model)
         {
             <div class="child-item">
-                <img src="~/images/avatars/@item.AvatarFileName" alt="Аватар" class="avatar">
                 <a asp-controller="Parent" asp-action="ChildSchedule" asp-route-id="@item.Id">
+                    <img src="~/images/avatars/@item.AvatarFileName" alt="Аватар" class="avatar"><br />
                     @item.Name
                 </a>
             </div>

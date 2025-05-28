@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WebApplicationMVC.Controllers.AdminController">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\AdminController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.AuthController">
+    <Position X="1" Y="0.5" Width="1.5" />
+    <Members>
+      <Method Name="Onlyadmins" Hidden="true" />
+      <Method Name="Onlyusers" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAABAABAAAAAAAgAAAAABJQBAAAAAAAAAEQAAAAAAA=</HashCode>
+      <FileName>Controllers\AuthController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userManager" />
+      <Field Name="_emailService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.CoursesController">
+    <Position X="17" Y="1.75" Width="1.5" />
+    <AssociationLine Name="_context" Type="WebApplicationMVC.Models.Database.AppDbContext" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="17.75" Y="1.75" />
+        <Point X="17.75" Y="0.562" />
+        <Point X="10.25" Y="0.562" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBACAIAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\CoursesController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.GroupsController">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <AssociationLine Name="_context" Type="WebApplicationMVC.Models.Database.AppDbContext" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.312" Y="1.75" />
+        <Point X="12.312" Y="1.062" />
+        <Point X="10.25" Y="1.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.115" Y="-0.002" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBAGAAAAAAAAAAAEAAEAiAAEAAAAIAAA=</HashCode>
+      <FileName>Controllers\GroupsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.HomeController">
+    <Position X="1" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.LessonsController">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAABBACAAAAQAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\LessonsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.ParentController">
+    <Position X="15.25" Y="1.75" Width="1.5" />
+    <AssociationLine Name="_context" Type="WebApplicationMVC.Models.Database.AppDbContext" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="16" Y="1.75" />
+        <Point X="16" Y="0.812" />
+        <Point X="10.25" Y="0.812" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAEAAAAAAABEAAAAAAAA=</HashCode>
+      <FileName>Controllers\ParentController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.StudentsController">
+    <Position X="13.5" Y="1.75" Width="1.5" />
+    <AssociationLine Name="_context" Type="WebApplicationMVC.Models.Database.AppDbContext" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.188" Y="1.75" />
+        <Point X="14.188" Y="0.938" />
+        <Point X="10.25" Y="0.938" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAABJAGAEAAAAAAAAAEAAEgCAAEAAAAIAAA=</HashCode>
+      <FileName>Controllers\StudentsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.TeacherController">
+    <Position X="6.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAECAAQAAAA=</HashCode>
+      <FileName>Controllers\TeacherController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.UsersController">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBQCAAAAAAAAAAAEAAEASAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UsersController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.Test.CalendarLessonController">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAABAAAAAAAAAAAAAEAAEAAAiEAAAAACAA=</HashCode>
+      <FileName>Controllers\CalendarLessonController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Controllers.Test.Event">
+    <Position X="11" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAEACAAAEAAAAAACAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Controllers\CalendarLessonController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Services.EmailService">
+    <Position X="1" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAQAAEAAAEAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Services\EmailService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.AppDbContext" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAGCAAQAAAAAEAAAAAACAEAAAAAAAAAAQABAAAAA=</HashCode>
+      <FileName>Models\Database\AppDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.Attendance">
+    <Position X="4.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACIAAAQgAAAEAAAAAACAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Models\Database\Attendance.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Lesson" />
+      <Property Name="Student" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.Course">
+    <Position X="8.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCAEAAAAQgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Database\Course.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.ForgotPasswordModel">
+    <Position X="15" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Models\Database\ForgotPasswordModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.Group">
+    <Position X="6.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAMGIAAAAAAAAAAAAIAACAQAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Models\Database\Group.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="GroupType" />
+      <Property Name="Course" />
+      <Property Name="Teacher" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.Lesson">
+    <Position X="4.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Database\Lesson.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Group" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.ResetPasswordModel">
+    <Position X="13" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAABIAA=</HashCode>
+      <FileName>Models\Database\ResetPasswordModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.Student">
+    <Position X="7.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAEAEAAAAAAAAAAgQAAgAAAAQAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\Database\Student.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Group" />
+      <Property Name="User" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Models.Database.User">
+    <Position X="9.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICIEEIAAAAAAAAAEAQAAAAAAAQAAACAAAQAAAAgAg=</HashCode>
+      <FileName>Models\Database\User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AppRole" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebApplicationMVC.Auth.UserManager" Collapsed="true">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIBAAAAAACQAAAAAABAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Auth\UserManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="WebApplicationMVC.Models.Database.AppRole" Collapsed="true">
+    <Position X="12.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Models\Database\AppRole.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="WebApplicationMVC.Models.Database.GroupType" Collapsed="true">
+    <Position X="5.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Database\Group.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

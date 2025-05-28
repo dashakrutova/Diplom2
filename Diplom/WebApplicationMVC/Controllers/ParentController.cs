@@ -26,6 +26,18 @@ public class ParentController : Controller
             ? "/images/avatars/" + allAvatars[rng.Next(allAvatars.Count)]
             : "/images/icon.png";
 
+        //для отображения в ЛК
+        if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId))
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                ViewBag.Phone = user.Number;
+                ViewBag.Email = user.Login;
+                ViewBag.FullName = $"{user.LastName} {user.FirstName} {user.MiddleName}";
+            }
+        }
+
         return View();
     }
 
