@@ -85,6 +85,8 @@ namespace WebApplicationMVC.Helpers
                 "ForgotPassword"=> "Сброс пароля",
                 "ForgotPasswordConfirmation" => "Сброс пароля",
                 "ResetPassword" => "Сброс пароля",
+                "ListByTeacher" => "Группы преподавателя",
+                "ListByParent" => "Дети родителя",
 
                 _ => action
             };

@@ -4,7 +4,23 @@
     ViewData["Title"] = "Группы преподавателя";
 }
 
-<h2>@ViewData["Title"]</h2>
+<style>
+    body{
+        padding-top: 50px;
+    }
+</style>
+
+<div class="d-flex align-items-center mb-4">
+    <div class="me-3" style="margin-left: -60px;">
+        <a asp-controller="Users" asp-action="Index" class="text-decoration-none text-dark">
+            <i class="bi bi-arrow-left fs-3"></i>
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+</div>
 
 @if (!Model.Any())
 {

@@ -3,8 +3,23 @@
 @{
     ViewData["Title"] = "Дети родителя";
 }
+<style>
+    body {
+        padding-top: 50px;
+    }
+</style>
 
-<h2>@ViewData["Title"]</h2>
+<div class="d-flex align-items-center mb-4">
+    <div class="me-3" style="margin-left: -60px;">
+        <a asp-controller="Users" asp-action="Index" class="text-decoration-none text-dark">
+            <i class="bi bi-arrow-left fs-3"></i>
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+</div>
 
 @if (Model.Count == 0)
 {
