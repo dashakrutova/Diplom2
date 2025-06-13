@@ -18,11 +18,14 @@
 </head>
 
 <body>
-
     <div class="page-title">
-        <h1>Дети</h1>
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Parent" asp-action="Index" class="me-3 text-decoration-none text-dark">
+                <i class="bi bi-arrow-left fs-3"></i>
+            </a>
+            <h1>Дети</h1>
+        </div>
     </div>
-
     <div class="children-list">
         @foreach (var item in Model)
         {
@@ -34,7 +37,6 @@
             </div>
         }
     </div>
-
     
 </body>
 

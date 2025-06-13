@@ -85,11 +85,11 @@
     <section id="signup" class="trial-class">
         <div class="trial-container">
             <h2>Запишитесь на пробное занятие</h2>
-            <form class="form">
+            <form asp-controller="Home" asp-action="SendMail" method="post" class="form">
                 <div class="form-fields">
-                    <input type="text" placeholder="Фамилия Имя" required>
-                    <input type="tel" placeholder="Телефон" required>
-                    <input type="email" placeholder="E-mail" required>
+                    <input type="text" name="FullName" placeholder="Фамилия Имя" required>
+                    <input type="tel" name="Phone" placeholder="Телефон" required>
+                    <input type="email" name="Email" placeholder="E-mail" required>
                 </div>
                 <div class="form-checkbox">
                     <input type="checkbox" id="agreement" required>
@@ -127,6 +127,7 @@
             </div>
         </div>
     </section>
+
     <footer id="contacts" class="footer">
         <div class="footer-content">
             <div class="footer-info">

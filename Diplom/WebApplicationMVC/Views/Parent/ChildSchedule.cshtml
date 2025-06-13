@@ -10,6 +10,14 @@
     string monthName = char.ToUpper(monthNameRaw[0]) + monthNameRaw.Substring(1);
 }
 
+<div class="d-flex align-items-center mb-4">
+        <div class="me-3" style="margin-left: -60px;">
+            <a asp-controller="Parent" asp-action="Index" class="text-decoration-none text-dark">
+                <i class="bi bi-arrow-left fs-3"></i>
+            </a>
+        </div>
+</div>
+
 <div class="month-navigation">
     <a href="@Url.Action("ChildSchedule", new { year = Model.Month == 1 ? Model.Year - 1 : Model.Year, month = Model.Month == 1 ? 12 : Model.Month - 1 })">« Предыдущий месяц</a>
     <h2>@monthName @Model.Year</h2>
