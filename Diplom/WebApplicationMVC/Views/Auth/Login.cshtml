@@ -16,14 +16,14 @@
             <form asp-action="Login" method="post">
                 <div>
                     <label asp-for="Login">Email</label>
-                    <input asp-for="Login" />
+                    <input asp-for="Login" /><br>
                     <span asp-validation-for="Login" class="text-danger"></span>
                 </div>
 
                 <div>
                     <label asp-for="Password">Пароль</label>
                     <div class="password-container">
-                        <input type="password" asp-for="Password" id="password-input" />
+                        <input type="password" asp-for="Password" id="password-input" /><br>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                 </div>

@@ -173,7 +173,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        user.Password = model.NewPassword; // Здесь лучше хешировать пароль!
+        user.Password = model.NewPassword;
         user.PasswordResetToken = null;
         user.PasswordResetTokenExpires = null;
         await _userManager.UpdateUserAsync(user);
